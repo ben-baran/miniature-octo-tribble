@@ -1,0 +1,14 @@
+What should be worked on:
+	Fixing log4cplus error
+	Making custom sizes when you open a new window
+	Ability to change positions of start and end nodes in the same window
+	File Menu:
+		Open in new window
+	Edit Menu:
+		Clear
+		Undo
+		Line
+		(Circle, Fill, Rectangle, etc.?)
+	Analysis Menu:
+		Compare weightings (Change g and h costs to see the most efficient one)
+		Stats (Number of cycles, amount of time it took, etc.)
