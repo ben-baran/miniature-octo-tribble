@@ -94,7 +94,7 @@ public class PathWindow extends JFrame implements ActionListener
 		}
 		else if(e.getActionCommand().equals("Save File"))
 		{
-			fc = new JFileChooser("./docs");
+			fc = new JFileChooser("./res/docs");
 			int accepted = fc.showSaveDialog(PathWindow.this);
 			if(accepted == JFileChooser.APPROVE_OPTION)
 			{
