@@ -12,3 +12,6 @@ What should be worked on:
 	Analysis Menu:
 		Compare weightings (Change g and h costs to see the most efficient one)
 		Stats (Number of cycles, amount of time it took, etc.)
+	Help Menu:
+		Help (Open readme)
+		Preferences (Open new PreferencesChooser
