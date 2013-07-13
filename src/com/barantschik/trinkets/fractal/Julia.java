@@ -41,13 +41,13 @@ public class Julia extends JPanel implements MouseListener, KeyListener
 	
 	public Julia()
 	{
-		cReal = -.781;
-		cImaginary = -.105;
+		cReal = -0.8;
+		cImaginary = 0.156;
 
 		setSize(SIZE_X, SIZE_Y);
 		setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
-
-		setVisible(true);
+		setFocusable(true);
+		
 		addMouseListener(this);
 		addKeyListener(this);
 
