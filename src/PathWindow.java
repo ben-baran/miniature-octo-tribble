@@ -21,10 +21,6 @@ public class PathWindow extends JFrame implements ActionListener
 	private JFileChooser fc;
 	private PreferencesChooser pc;
 	
-	public static void main(String[] args)
-	{
-		new PathWindow();
-	}
 	public PathWindow()
 	{
 		
@@ -78,7 +74,7 @@ public class PathWindow extends JFrame implements ActionListener
 		if(e.getActionCommand().equals("New Window")) new PathWindow();
 		else if(e.getActionCommand().equals("Load File"))
 		{
-			fc = new JFileChooser("./docs");
+			fc = new JFileChooser("./res/PathFinder/docs");
 			int accepted = fc.showOpenDialog(PathWindow.this);
 			if(accepted == JFileChooser.APPROVE_OPTION)
 			{
@@ -88,7 +84,7 @@ public class PathWindow extends JFrame implements ActionListener
 		}
 		else if(e.getActionCommand().equals("Save File"))
 		{
-			fc = new JFileChooser("./res/docs");
+			fc = new JFileChooser("./res/PathFinder/docs");
 			int accepted = fc.showSaveDialog(PathWindow.this);
 			if(accepted == JFileChooser.APPROVE_OPTION)
 			{
@@ -106,7 +102,7 @@ public class PathWindow extends JFrame implements ActionListener
 		}
 		else if(e.getActionCommand().equals("Save as Image"))
 		{
-			fc = new JFileChooser("./res/images/usr");
+			fc = new JFileChooser("./res/PathFinder/images/usr");
 			int accepted = fc.showSaveDialog(PathWindow.this);
 			if(accepted == JFileChooser.APPROVE_OPTION)
 			{
