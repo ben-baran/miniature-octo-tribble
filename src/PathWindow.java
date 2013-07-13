@@ -16,7 +16,7 @@ public class PathWindow extends JFrame implements ActionListener
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	private JMenuBar menuBar;
 	private JMenu fileMenu, editMenu, analysisMenu, helpMenu;
-	private JMenuItem newWindow, save, load, preferences;
+	private JMenuItem newWindow, save, saveAsImage, load, preferences;
 	private PathFinder pf = new PathFinder();
 	private JFileChooser fc;
 	private PreferencesChooser pc;
@@ -41,12 +41,15 @@ public class PathWindow extends JFrame implements ActionListener
 		newWindow = new JMenuItem("New Window");
 		
 		save = new JMenuItem("Save File");
+		saveAsImage = new JMenuItem("Save as Image");
 		load = new JMenuItem("Load File");
 		newWindow.addActionListener(this);
 		save.addActionListener(this);
+		saveAsImage.addActionListener(this);
 		load.addActionListener(this);
 		fileMenu.add(newWindow);
 		fileMenu.add(save);
+		fileMenu.add(saveAsImage);
 		fileMenu.add(load);
 		
 		preferences = new JMenuItem("Preferences");
@@ -66,30 +69,8 @@ public class PathWindow extends JFrame implements ActionListener
 	
 	public PathWindow(File f)
 	{
+		super();
 		pf = new PathFinder(f);
-		
-		setSize(SIZE_X, SIZE_Y);
-		setLocationRelativeTo(null);
-		setTitle("A* Algorithm");
-		
-		getContentPane().add(pf);
-		menuBar = new JMenuBar();
-		fileMenu = new JMenu("File");
-		newWindow = new JMenuItem("New Window");
-		save = new JMenuItem("Save File");
-		load = new JMenuItem("Load File");
-		newWindow.addActionListener(this);
-		save.addActionListener(this);
-		load.addActionListener(this);
-		fileMenu.add(newWindow);
-		fileMenu.add(save);
-		fileMenu.add(load);
-		menuBar.add(fileMenu);
-		setJMenuBar(menuBar);
-		pack();
-		
-		setVisible(true);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -121,6 +102,16 @@ public class PathWindow extends JFrame implements ActionListener
 					err.printStackTrace();
 				}
 				pf.putMapInFile(f);
+			}
+		}
+		else if(e.getActionCommand().equals("Save as Image"))
+		{
+			fc = new JFileChooser("./res/images/usr");
+			int accepted = fc.showSaveDialog(PathWindow.this);
+			if(accepted == JFileChooser.APPROVE_OPTION)
+			{
+				File f = fc.getSelectedFile();
+				pf.saveAsImage(f);
 			}
 		}
 		else if(e.getActionCommand().equals("Preferences"))

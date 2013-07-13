@@ -8,15 +8,15 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -192,6 +192,73 @@ public class PathFinder extends JPanel implements KeyListener, MouseListener, Mo
 		catch (IOException e)
 		{
 			System.out.println("Could not close bufferwriter stream.");
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveAsImage(File f)
+	{
+		BufferedImage fileImage = new BufferedImage(SIZE_X, SIZE_Y, BufferedImage.TYPE_INT_RGB);
+		Graphics g = fileImage.getGraphics();
+		
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, SIZE_X, SIZE_Y);
+		
+		for(int i = 0; i < numX; i++)
+		{
+			for(int j = 0; j < numY; j++)
+			{
+				if(map[i][j].type == NodeType.WALL)
+				{
+					g.setColor(Color.BLACK);
+					g.fillRect(i * boxX, j * boxY, boxX, boxY);
+				}
+				else if(map[i][j].type == NodeType.OPEN)
+				{
+					g.setColor(Color.ORANGE);
+					g.fillRect(i * boxX, j * boxY, boxX, boxY);
+				}
+				else if(map[i][j].type == NodeType.CLOSED)
+				{
+					g.setColor(Color.CYAN);
+					g.fillRect(i * boxX, j * boxY, boxX, boxY);
+				}
+			}
+		}
+		
+		if(buildPhase)
+		{
+			if(!erase)
+			{
+				g.setColor(Color.BLACK);
+			}
+			else
+			{
+				g.setColor(Color.WHITE);
+			}
+			g.fillRect(hoverX * boxX, hoverY * boxY, boxX, boxY);
+		}
+		
+		g.setColor(Color.RED);
+		Node curNode = map[curX][curY];
+		while(curNode != null)
+		{
+			g.fillRect(curNode.x * boxX, curNode.y * boxY, boxX, boxY);
+			curNode = curNode.getParent();
+		}
+		
+		g.setColor(Color.BLUE);
+		g.fillRect(startX * boxX, startY * boxY, boxX, boxY);
+		
+		g.setColor(Color.GREEN);
+		g.fillRect(endX * boxX, endY * boxY, boxX, boxY);
+		
+		try
+		{
+			ImageIO.write(fileImage, "PNG", f);
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
