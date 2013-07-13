@@ -15,7 +15,7 @@ public class PathWindow extends JFrame implements ActionListener
 {
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	private JMenuBar menuBar;
-	private JMenu fileMenu;
+	private JMenu fileMenu, editMenu, analysisMenu, helpMenu;
 	private JMenuItem newWindow, save, load;
 	private PathFinder pf = new PathFinder();
 	private JFileChooser fc;
@@ -34,6 +34,9 @@ public class PathWindow extends JFrame implements ActionListener
 		getContentPane().add(pf);
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu("File");
+		editMenu = new JMenu("Edit");
+		analysisMenu = new JMenu("Analysis");
+		helpMenu = new JMenu("Help");
 		newWindow = new JMenuItem("New Window");
 		save = new JMenuItem("Save File");
 		load = new JMenuItem("Load File");
@@ -44,6 +47,9 @@ public class PathWindow extends JFrame implements ActionListener
 		fileMenu.add(save);
 		fileMenu.add(load);
 		menuBar.add(fileMenu);
+		menuBar.add(editMenu);
+		menuBar.add(analysisMenu);
+		menuBar.add(helpMenu);
 		setJMenuBar(menuBar);
 		pack();
 		
