@@ -1,0 +1,7 @@
+Future updates:
+	Add a menubar with different options
+	Allow to choose from Julia and Mandelbrot
+	Change values of C and I
+	Make formula builder
+	Make preferences
+	Make color chooser
