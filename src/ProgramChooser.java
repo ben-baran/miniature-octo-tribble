@@ -28,7 +28,12 @@ public class ProgramChooser extends JFrame implements ActionListener
 		JButton pathfinder = new JButton("Open PathFinder");
 		pathfinder.addActionListener(this);
 		pathfinder.setAlignmentX(Component.CENTER_ALIGNMENT);
-		add(pathfinder);
+		getContentPane().add(pathfinder);
+		
+		JButton fractal = new JButton("Open Fractal Generator");
+		fractal.addActionListener(this);
+		fractal.setAlignmentX(Component.CENTER_ALIGNMENT);
+		getContentPane().add(fractal);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -36,6 +41,10 @@ public class ProgramChooser extends JFrame implements ActionListener
 		if(e.getActionCommand().equals("Open PathFinder"))
 		{
 			new com.barantschik.trinkets.pathfinder.PathWindow();
+		}
+		else if(e.getActionCommand().equals("Open Fractal Generator"))
+		{
+			new com.barantschik.trinkets.fractal.FractalWindow();
 		}
 	}
 }
