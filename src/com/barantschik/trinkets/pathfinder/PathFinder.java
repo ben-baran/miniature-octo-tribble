@@ -1,3 +1,5 @@
+package com.barantschik.trinkets.pathfinder;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

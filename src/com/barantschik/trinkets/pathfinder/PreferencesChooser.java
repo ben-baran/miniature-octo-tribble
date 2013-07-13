@@ -1,3 +1,5 @@
+package com.barantschik.trinkets.pathfinder;
+
 import javax.swing.JFrame;
 
 public class PreferencesChooser extends JFrame

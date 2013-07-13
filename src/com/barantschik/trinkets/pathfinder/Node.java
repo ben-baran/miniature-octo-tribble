@@ -1,3 +1,5 @@
+package com.barantschik.trinkets.pathfinder;
+
 public class Node
 {
 	public int x, y;
