@@ -16,9 +16,10 @@ public class PathWindow extends JFrame implements ActionListener
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	private JMenuBar menuBar;
 	private JMenu fileMenu, editMenu, analysisMenu, helpMenu;
-	private JMenuItem newWindow, save, load;
+	private JMenuItem newWindow, save, load, preferences;
 	private PathFinder pf = new PathFinder();
 	private JFileChooser fc;
+	private PreferencesChooser pc;
 	
 	public static void main(String[] args)
 	{
@@ -38,6 +39,7 @@ public class PathWindow extends JFrame implements ActionListener
 		analysisMenu = new JMenu("Analysis");
 		helpMenu = new JMenu("Help");
 		newWindow = new JMenuItem("New Window");
+		
 		save = new JMenuItem("Save File");
 		load = new JMenuItem("Load File");
 		newWindow.addActionListener(this);
@@ -46,6 +48,11 @@ public class PathWindow extends JFrame implements ActionListener
 		fileMenu.add(newWindow);
 		fileMenu.add(save);
 		fileMenu.add(load);
+		
+		preferences = new JMenuItem("Preferences");
+		preferences.addActionListener(this);
+		helpMenu.add(preferences);
+		
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
 		menuBar.add(analysisMenu);
@@ -115,6 +122,11 @@ public class PathWindow extends JFrame implements ActionListener
 				}
 				pf.putMapInFile(f);
 			}
+		}
+		else if(e.getActionCommand().equals("Preferences"))
+		{
+			pc = new PreferencesChooser();
+			
 		}
 	}
 }

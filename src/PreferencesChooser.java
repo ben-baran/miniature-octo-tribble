@@ -2,7 +2,7 @@ import javax.swing.JFrame;
 
 public class PreferencesChooser extends JFrame
 {
-	private final int SIZE_X = 200, SIZE_Y = 500;
+	private final int SIZE_X = 400, SIZE_Y = 800;
 	
 	public PreferencesChooser()
 	{
