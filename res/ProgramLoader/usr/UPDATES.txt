@@ -1,0 +1,2 @@
+Add a menu, with options and preferences.
+Make UI prettier.
