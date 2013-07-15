@@ -38,7 +38,7 @@ public class PathFinder extends JPanel implements KeyListener, MouseListener, Mo
 	
 	private int curX = startX, curY = startY;
 	
-	private Timer time = new Timer(1, this);
+	private Timer time = new Timer(0, this);
 	
 	public PathFinder()
 	{
