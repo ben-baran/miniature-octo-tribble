@@ -25,6 +25,7 @@ public class ProgramChooser extends JFrame implements ActionListener
 		setVisible(true);
 		
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		
 		JButton pathfinder = new JButton("Open PathFinder");
 		pathfinder.addActionListener(this);
 		pathfinder.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -34,6 +35,11 @@ public class ProgramChooser extends JFrame implements ActionListener
 		fractal.addActionListener(this);
 		fractal.setAlignmentX(Component.CENTER_ALIGNMENT);
 		getContentPane().add(fractal);
+		
+		JButton conway = new JButton("Open Conway's Game of Life");
+		conway.addActionListener(this);
+		conway.setAlignmentX(Component.CENTER_ALIGNMENT);
+		getContentPane().add(conway);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -45,6 +51,10 @@ public class ProgramChooser extends JFrame implements ActionListener
 		else if(e.getActionCommand().equals("Open Fractal Generator"))
 		{
 			new com.barantschik.trinkets.fractal.FractalWindow();
+		}
+		else if(e.getActionCommand().equals("Open Conway's Game of Life"))
+		{
+			new com.barantschik.trinkets.conway.GameWindow();
 		}
 	}
 }

@@ -451,11 +451,11 @@ public class PathFinder extends JPanel implements KeyListener, MouseListener, Mo
 			{
 				if(map[i][j].type == NodeType.OPEN)
 				{
-					if(map[i][j].getGCost() + (Math.abs(endX - i) + Math.abs(endY - j)) * 10 < lowestFCost)
+					if(map[i][j].getGCost() + (Math.abs(endX - i) + Math.abs(endY - j)) * 0 < lowestFCost)
 					{
 						curX = i;
 						curY = j;
-						lowestFCost = map[i][j].getGCost() + (Math.abs(endX - i) + Math.abs(endY - j)) * 10;
+						lowestFCost = map[i][j].getGCost() + (Math.abs(endX - i) + Math.abs(endY - j)) * 0;
 						if(curX == endX && curY == endY)
 						{
 							time.stop();
