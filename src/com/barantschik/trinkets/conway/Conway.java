@@ -16,8 +16,8 @@ import javax.swing.Timer;
 
 public class Conway extends JPanel implements MouseListener, MouseMotionListener, KeyListener, ActionListener
 {
-	private final int SIZE_X = 1920, SIZE_Y = 1200;
-	private final int NUM_X = 960, NUM_Y = 600;
+	private final int SIZE_X = 1000, SIZE_Y = 1000;
+	private final int NUM_X = 40, NUM_Y = 40;
 	private final int BLOCK_X = SIZE_X / NUM_X, BLOCK_Y = SIZE_Y / NUM_Y;
 	private boolean running = false;
 	private boolean[][] map = new boolean[NUM_X][NUM_Y];
