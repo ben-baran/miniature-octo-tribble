@@ -3,6 +3,8 @@ package com.barantschik.trinkets.conway;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -10,8 +12,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
-public class Conway extends JPanel implements MouseListener, MouseMotionListener, KeyListener
+public class Conway extends JPanel implements MouseListener, MouseMotionListener, KeyListener, ActionListener
 {
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	private final int NUM_X = 100, NUM_Y = 100;
@@ -19,6 +22,8 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	private boolean running = false;
 	private boolean[][] map = new boolean[NUM_X][NUM_Y];
 	private boolean[][] premap = map;
+	
+	private Timer time = new Timer(0, this);
 	
 	public Conway()
 	{
@@ -29,8 +34,58 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
+		
+		time.setRepeats(true);
 	}
 
+	public void actionPerformed(ActionEvent e)
+	{
+		update();
+		repaint();
+	}
+	
+	public void update()
+	{
+//		premap = map;
+		for(int i = 0; i < premap.length; i++)
+		{
+			for(int j = 0; j < premap[0].length; j++)
+			{
+				int numAlive = getNumNeighbors(i, j);
+				if(premap[i][j] == true)
+				{
+					if(!(numAlive == 2 || numAlive == 3)) premap[i][j] = false;
+				}
+				else if(numAlive == 3) premap[i][j] = true;
+			}
+		}
+		map = premap;
+	}
+	
+	public int getNumNeighbors(int x, int y)
+	{
+		int num = 0;
+		
+		for(int i = -1; i < 2; i++)
+		{
+			for(int j = -1; j < 2; j++)
+			{
+				if(!(i == 0 && j == 0))
+				{
+					if(alive(x + i, y + j)) num++;
+				}
+			}
+		}
+		
+		return num;
+	}
+	
+	public boolean alive(int x, int y)
+	{
+		if(x != -1 && x != NUM_X && y != -1 && y != NUM_Y) return map[x][y];
+		return false;
+	}
+	
 	public void paintComponent(Graphics g)
 	{
 		g.setColor(Color.WHITE);
@@ -50,20 +105,33 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 		if(e.getKeyCode() == KeyEvent.VK_SPACE)
 		{
 			running ^= true;
+			if(!running) time.stop();
+			else time.start();
 		}
 	}
 	public void mouseClicked(MouseEvent e)
 	{
-		int selectedX = e.getX() / BLOCK_X, selectedY = e.getY() / BLOCK_Y;
-		map[selectedX][selectedY] ^= true;
-		repaint();
+		if(!running)
+		{			
+			int selectedX = e.getX() / BLOCK_X, selectedY = e.getY() / BLOCK_Y;
+			map[selectedX][selectedY] ^= true;
+			repaint();
+		}
 	}
 	
 	public void mouseDragged(MouseEvent e)
 	{
-		int selectedX = e.getX() / BLOCK_X, selectedY = e.getY() / BLOCK_Y;
-		map[selectedX][selectedY] = true;
-		repaint();
+		if(!running)
+		{			
+			int selectedX = e.getX() / BLOCK_X, selectedY = e.getY() / BLOCK_Y;
+			map[selectedX][selectedY] = true;
+			repaint();
+		}
+	}
+	
+	public Timer getTimer()
+	{
+		return time;
 	}
 	
 	//Unimplemented methods

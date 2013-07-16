@@ -496,6 +496,11 @@ public class PathFinder extends JPanel implements KeyListener, MouseListener, Mo
 		repaint();
 	}
 	
+	public Timer getTimer()
+	{
+		return time;
+	}
+	
 	//Unimplemented methods
 	public void keyReleased(KeyEvent e){}
 	public void keyTyped(KeyEvent e){}

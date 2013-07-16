@@ -2,6 +2,7 @@ package com.barantschik.trinkets.pathfinder;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.JFileChooser;
@@ -114,5 +115,10 @@ public class PathWindow extends JFrame implements ActionListener
 			pc = new PreferencesChooser();
 			
 		}
+	}
+	
+	public void windowClosing(WindowEvent e)
+	{
+		pf.getTimer().stop();
 	}
 }

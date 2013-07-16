@@ -1,6 +1,7 @@
 package com.barantschik.trinkets.fractal;
 
 import java.awt.Dimension;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
