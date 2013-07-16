@@ -1,5 +1,6 @@
 package com.barantschik.trinkets.conway;
 
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
@@ -19,10 +20,13 @@ public class GameWindow extends JFrame
 		pack();
 		
 		setVisible(true);
-	}
-	
-	public void windowClosing(WindowEvent e)
-	{
-		conway.getTimer().stop();
+		
+		addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent e)
+			{
+				conway.getTimer().stop();
+			}
+		});
 	}
 }
