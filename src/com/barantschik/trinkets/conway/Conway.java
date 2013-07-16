@@ -41,7 +41,6 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	public void actionPerformed(ActionEvent e)
 	{
 		update();
-		update();
 		repaint();
 	}
 	

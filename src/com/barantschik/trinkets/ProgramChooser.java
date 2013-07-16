@@ -1,3 +1,5 @@
+package com.barantschik.trinkets;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
