@@ -16,12 +16,12 @@ import javax.swing.Timer;
 
 public class Conway extends JPanel implements MouseListener, MouseMotionListener, KeyListener, ActionListener
 {
-	private final int SIZE_X = 1000, SIZE_Y = 1000;
-	private final int NUM_X = 100, NUM_Y = 100;
+	private final int SIZE_X = 1920, SIZE_Y = 1200;
+	private final int NUM_X = 960, NUM_Y = 600;
 	private final int BLOCK_X = SIZE_X / NUM_X, BLOCK_Y = SIZE_Y / NUM_Y;
 	private boolean running = false;
 	private boolean[][] map = new boolean[NUM_X][NUM_Y];
-	private boolean[][] premap = map;
+	private boolean[][] premap = new boolean[NUM_X][NUM_Y];
 	
 	private Timer time = new Timer(0, this);
 	
@@ -41,12 +41,12 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	public void actionPerformed(ActionEvent e)
 	{
 		update();
+		update();
 		repaint();
 	}
 	
 	public void update()
 	{
-//		premap = map;
 		for(int i = 0; i < premap.length; i++)
 		{
 			for(int j = 0; j < premap[0].length; j++)
@@ -56,10 +56,19 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 				{
 					if(!(numAlive == 2 || numAlive == 3)) premap[i][j] = false;
 				}
-				else if(numAlive == 3) premap[i][j] = true;
+				else if(numAlive == 3)
+				{
+					premap[i][j] = true;
+				}
 			}
 		}
-		map = premap;
+		for(int i = 0; i < premap.length; i++)
+		{
+			for(int j = 0; j < premap[0].length; j++)
+			{
+				map[i][j] = premap[i][j];
+			}
+		}
 	}
 	
 	public int getNumNeighbors(int x, int y)
@@ -73,7 +82,7 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 				if(!(i == 0 && j == 0))
 				{
 					if(alive(x + i, y + j)) num++;
-				}
+				} 
 			}
 		}
 		
@@ -82,7 +91,10 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	
 	public boolean alive(int x, int y)
 	{
-		if(x != -1 && x != NUM_X && y != -1 && y != NUM_Y) return map[x][y];
+		if(x != -1 && x != NUM_X && y != -1 && y != NUM_Y)
+		{
+			return map[x][y];
+		}
 		return false;
 	}
 	
@@ -115,6 +127,7 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 		{			
 			int selectedX = e.getX() / BLOCK_X, selectedY = e.getY() / BLOCK_Y;
 			map[selectedX][selectedY] ^= true;
+			premap[selectedX][selectedY] = map[selectedX][selectedY];
 			repaint();
 		}
 	}
@@ -125,6 +138,7 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 		{			
 			int selectedX = e.getX() / BLOCK_X, selectedY = e.getY() / BLOCK_Y;
 			map[selectedX][selectedY] = true;
+			premap[selectedX][selectedY] = map[selectedX][selectedY];
 			repaint();
 		}
 	}
