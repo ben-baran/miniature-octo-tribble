@@ -10,6 +10,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -17,11 +20,12 @@ import javax.swing.Timer;
 public class Conway extends JPanel implements MouseListener, MouseMotionListener, KeyListener, ActionListener
 {
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
-	private final int NUM_X = 40, NUM_Y = 40;
-	private final int BLOCK_X = SIZE_X / NUM_X, BLOCK_Y = SIZE_Y / NUM_Y;
+	
+	private int numX = 100, numY = 100;
+	private int blockX = SIZE_X / numX, blockY = SIZE_Y / numY;
 	private boolean running = false;
-	private boolean[][] map = new boolean[NUM_X][NUM_Y];
-	private boolean[][] premap = new boolean[NUM_X][NUM_Y];
+	private boolean[][] map = new boolean[numX][numY];
+	private boolean[][] premap = new boolean[numX][numY];
 	
 	private Timer time = new Timer(0, this);
 	
@@ -38,6 +42,45 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 		time.setRepeats(true);
 	}
 
+	public Conway(File f)
+	{
+		Scanner s = null;
+		try
+		{
+			s = new Scanner(f);
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		
+		numX = Integer.parseInt(s.nextLine());
+		numY = Integer.parseInt(s.nextLine());
+		blockX = SIZE_X / numX;
+		blockY = SIZE_Y / numY;
+		
+		map = new boolean[numX][numY];
+		premap = new boolean[numX][numY];
+		
+		for(int i = 0; i < numY; i++)
+		{
+			String curLine = s.nextLine();
+			for(int j = 0; j < numX; j++)
+			{
+				if(curLine.charAt(j) == '1')
+				{
+					map[j][i] = true;
+					premap[j][i] = true;
+				}
+				else
+				{
+					map[j][i] = false;
+					premap[j][i] = false;
+				}
+			}
+		}
+	}
+	
 	public void actionPerformed(ActionEvent e)
 	{
 		update();
@@ -90,7 +133,7 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	
 	public boolean alive(int x, int y)
 	{
-		if(x != -1 && x != NUM_X && y != -1 && y != NUM_Y)
+		if(x != -1 && x != numX && y != -1 && y != numY)
 		{
 			return map[x][y];
 		}
@@ -106,7 +149,8 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 		{
 			for(int j = 0; j < map[0].length; j++)
 			{
-				if(map[i][j] == true) g.fillRect(i * BLOCK_X, j * BLOCK_Y, BLOCK_X, BLOCK_Y);
+				g.drawRect(i * blockX, j * blockY, blockX, blockY);
+				if(map[i][j] == true) g.fillRect(i * blockX, j * blockY, blockX, blockY);
 			}
 		}
 	}
@@ -124,7 +168,7 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	{
 		if(!running)
 		{			
-			int selectedX = e.getX() / BLOCK_X, selectedY = e.getY() / BLOCK_Y;
+			int selectedX = e.getX() / blockX, selectedY = e.getY() / blockY;
 			map[selectedX][selectedY] ^= true;
 			premap[selectedX][selectedY] = map[selectedX][selectedY];
 			repaint();
@@ -135,7 +179,7 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	{
 		if(!running)
 		{			
-			int selectedX = e.getX() / BLOCK_X, selectedY = e.getY() / BLOCK_Y;
+			int selectedX = e.getX() / blockX, selectedY = e.getY() / blockY;
 			map[selectedX][selectedY] = true;
 			premap[selectedX][selectedY] = map[selectedX][selectedY];
 			repaint();
