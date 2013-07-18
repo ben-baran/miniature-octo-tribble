@@ -4,11 +4,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
+import com.barantschik.trinkets.pathfinder.PathWindow;
 
 public class GameWindow extends JFrame implements ActionListener
 {
@@ -17,7 +21,8 @@ public class GameWindow extends JFrame implements ActionListener
 	
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
-	private JMenuItem newWindow;
+	private JMenuItem newWindow, loadFile;
+	private JFileChooser fc;
 	
 	public GameWindow()
 	{
@@ -29,9 +34,14 @@ public class GameWindow extends JFrame implements ActionListener
 		
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu("File");
+		
 		newWindow = new JMenuItem("New Window");
 		newWindow.addActionListener(this);
+		loadFile = new JMenuItem("Load File");
+		loadFile.addActionListener(this);
+		
 		fileMenu.add(newWindow);
+		fileMenu.add(loadFile);
 		menuBar.add(fileMenu);
 		setJMenuBar(menuBar);
 		
@@ -52,6 +62,19 @@ public class GameWindow extends JFrame implements ActionListener
 		if(e.getActionCommand().equals("New Window"))
 		{
 			new GameWindow();
+		}
+		else if(e.getActionCommand().equals("Load File"))
+		{
+			fc = new JFileChooser("./res/Conway/docs");
+			int accepted = fc.showOpenDialog(GameWindow.this);
+			if(accepted == JFileChooser.APPROVE_OPTION)
+			{
+				File f = fc.getSelectedFile();
+				getContentPane().remove(conway);
+				conway = new Conway(f);
+				getContentPane().add(conway);
+				pack();
+			}
 		}
 	}
 }
