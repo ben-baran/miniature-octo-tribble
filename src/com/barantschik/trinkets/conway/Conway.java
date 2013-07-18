@@ -2,6 +2,7 @@ package com.barantschik.trinkets.conway;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,15 +20,19 @@ import javax.swing.Timer;
 
 public class Conway extends JPanel implements MouseListener, MouseMotionListener, KeyListener, ActionListener
 {
-	private final int SIZE_X = 1000, SIZE_Y = 1000;
+	private final int SIZE_X = 1500, SIZE_Y = 1500;
 	
-	private int numX = 100, numY = 100;
+	private int numX = 500, numY = 500;
 	private int blockX = SIZE_X / numX, blockY = SIZE_Y / numY;
 	private boolean running = false;
 	private boolean[][] map = new boolean[numX][numY];
 	private boolean[][] premap = new boolean[numX][numY];
+	private int numGenerations = 0;
+	private short[] survive = {2, 3};
+	private short[] birth = {3};
 	
-	private boolean wrap = true;
+	private boolean wrap = false;
+	private boolean grid = false;
 	
 	private Timer time = new Timer(0, this);
 	
@@ -95,6 +100,7 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	
 	public void update()
 	{
+		numGenerations++;
 		if(wrap)
 		{
 			for(int i = 0; i < premap.length; i++)
@@ -104,11 +110,23 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 					int numAlive = getWrapNumNeighbors(i, j);
 					if(premap[i][j] == true)
 					{
-						if(!(numAlive == 2 || numAlive == 3)) premap[i][j] = false;
+						boolean survived = false;
+						for(short s : survive) if(s == numAlive)
+						{
+							survived = true;
+							break;
+						}
+						if(!survived) premap[i][j] = false;
 					}
-					else if(numAlive == 3)
+					else
 					{
-						premap[i][j] = true;
+						boolean born = false;
+						for(short s : birth) if(s == numAlive)
+						{
+							born = true;
+							break;
+						}
+						if(born) premap[i][j] = true;
 					}
 				}
 			}
@@ -122,11 +140,23 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 					int numAlive = getNumNeighbors(i, j);
 					if(premap[i][j] == true)
 					{
-						if(!(numAlive == 2 || numAlive == 3)) premap[i][j] = false;
+						boolean survived = false;
+						for(short s : survive) if(s == numAlive)
+						{
+							survived = true;
+							break;
+						}
+						if(!survived) premap[i][j] = false;
 					}
-					else if(numAlive == 3)
+					else
 					{
-						premap[i][j] = true;
+						boolean born = false;
+						for(short s : birth) if(s == numAlive)
+						{
+							born = true;
+							break;
+						}
+						if(born) premap[i][j] = true;
 					}
 				}
 			}
@@ -203,7 +233,7 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 		{
 			for(int j = 0; j < map[0].length; j++)
 			{
-				g.drawRect(i * blockX, j * blockY, blockX, blockY);
+				if(grid) g.drawRect(i * blockX, j * blockY, blockX, blockY);
 				if(map[i][j] == true) g.fillRect(i * blockX, j * blockY, blockX, blockY);
 			}
 		}
@@ -216,6 +246,11 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 			running ^= true;
 			if(!running) time.stop();
 			else time.start();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			update();
+			repaint();
 		}
 	}
 	public void mouseClicked(MouseEvent e)
