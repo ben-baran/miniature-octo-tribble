@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -19,8 +21,9 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
-public class Julia extends JPanel implements MouseListener, KeyListener
+public class Julia extends JPanel implements MouseListener, KeyListener, ActionListener
 {
 	private static final long serialVersionUID = 1L;
 
@@ -29,124 +32,130 @@ public class Julia extends JPanel implements MouseListener, KeyListener
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	private final Color PRISONER_COLOR = Color.BLACK;
 	private final Color ORIGINAL_BASE_COLOR = Color.BLUE;
-	private final boolean IS_MANDELBROT = false;
-	
+	private final boolean IS_MANDELBROT = true;
+
 	private double cReal = 0, cImaginary = 0;
-	private boolean started = false;
 	private double centerX = 0, centerY = 0;
 	private double rangeX = 4, rangeY = 4;
 	private int numIterAdded = 0;
 	private int hue = 360; //HSV color system
 	private Color baseColor = ORIGINAL_BASE_COLOR;
-	
+	private boolean setup = true;
+
+	private Complex c = null;
+	Complex[][] field = null;
+	Complex[][] baseField = null;
+	private int numIter = 0;
+
+	private Timer time = new Timer(0, this);
+
 	public Julia()
 	{
-		cReal = -0.8;
-		cImaginary = 0.156;
+		cReal = 0;
+		cImaginary = 0;
 
 		setSize(SIZE_X, SIZE_Y);
 		setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
 		setFocusable(true);
-		
+
 		addMouseListener(this);
 		addKeyListener(this);
 
-		try
-		{
-			Thread.sleep(10);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		started = true;
-		repaint();
+		setup();
+		setup = true;
+		time.setRepeats(true);
+		time.start();
 	}
 
 	public void paintComponent(Graphics g)
 	{
-		if(started)
-		{
-			baseColor = ORIGINAL_BASE_COLOR;
-			hue = 360;
-
+		if(setup)
+		{				
 			g.setColor(PRISONER_COLOR);
 			g.fillRect(0, 0, SIZE_X, SIZE_Y);
-			g.setColor(baseColor);
+			setup = false;
+		}
 
-			Complex c = new Complex(cReal, cImaginary);
-			Complex[][] field = new Complex[SIZE_X][SIZE_Y];
-			Complex[][] baseField = null;
-			if(IS_MANDELBROT)
+		if(hue == 0) hue = 360;
+		//Random r = new Random();
+		//hue = r.nextInt(360) + 1;
+		hue -= 4;
+		double hNew = hue / 60.0;
+		double x = 1 - Math.abs((hNew % 2) - 1);
+		float brightness =1;
+		if(hNew >= 0 && hNew < 1) baseColor = new Color(brightness, (float) x * brightness, 0.0f);
+		else if(hNew >= 0 && hNew < 1) baseColor = new Color(brightness, (float) x * brightness, 0.0f);
+		else if(hNew >= 1 && hNew < 2) baseColor = new Color((float) x * brightness, brightness, 0.0f);
+		else if(hNew >= 2 && hNew < 3) baseColor = new Color(0.0f, brightness, (float) x * brightness);
+		else if(hNew >= 3 && hNew < 4) baseColor = new Color(0.0f, (float) x * brightness, brightness);
+		else if(hNew >= 4 && hNew < 5) baseColor = new Color((float) x * brightness, 0.0f, brightness);
+		else if(hNew >= 5 && hNew < 6) baseColor = new Color(brightness, 0.0f, (float) x * brightness);
+		g.setColor(baseColor);
+
+		for(int col = 0; col < SIZE_X; col++)
+		{
+			for(int row = 0; row < SIZE_Y; row++)
 			{
-				for(int i = 0; i < SIZE_X; i++)
+				if(!field[col][row].isOutsideRange())
 				{
-					for(int j = 0; j < SIZE_Y; j++)
-					{
-						field[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
-					}
+					field[col][row].square();
+					if(IS_MANDELBROT) field[col][row].add(baseField[col][row]);
+					else field[col][row].add(c);
 
-				}
-				baseField = new Complex[SIZE_X][SIZE_Y];
-				for(int i = 0; i < SIZE_X; i++)
-				{
-					for(int j = 0; j < SIZE_Y; j++)
+					if(field[col][row].magnitude() > 2)
 					{
-						baseField[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
-					}
-				}
-			}
-			else
-			{				
-				for(int i = 0; i < SIZE_X; i++)
-				{
-					for(int j = 0; j < SIZE_Y; j++)
-					{
-						field[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
-					}
-				}
-			}
-
-			for(int i = 0; i < BASE_NUM_ITERATIONS + numIterAdded; i++)
-			{
-				if(hue == 0) hue = 360;
-				//Random r = new Random();
-				//hue = r.nextInt(360) + 1;
-				hue -= 4;
-				double hNew = hue / 60.0;
-				double x = 1 - Math.abs((hNew % 2) - 1);
-				float brightness =1;
-				if(hNew >= 0 && hNew < 1) baseColor = new Color(brightness, (float) x * brightness, 0.0f);
-				else if(hNew >= 0 && hNew < 1) baseColor = new Color(brightness, (float) x * brightness, 0.0f);
-				else if(hNew >= 1 && hNew < 2) baseColor = new Color((float) x * brightness, brightness, 0.0f);
-				else if(hNew >= 2 && hNew < 3) baseColor = new Color(0.0f, brightness, (float) x * brightness);
-				else if(hNew >= 3 && hNew < 4) baseColor = new Color(0.0f, (float) x * brightness, brightness);
-				else if(hNew >= 4 && hNew < 5) baseColor = new Color((float) x * brightness, 0.0f, brightness);
-				else if(hNew >= 5 && hNew < 6) baseColor = new Color(brightness, 0.0f, (float) x * brightness);
-				g.setColor(baseColor);
-
-				for(int col = 0; col < SIZE_X; col++)
-				{
-					for(int row = 0; row < SIZE_Y; row++)
-					{
-						if(!field[col][row].isOutsideRange())
-						{
-							field[col][row].square();
-							if(IS_MANDELBROT) field[col][row].add(baseField[col][row]);
-							else field[col][row].add(c);
-
-							if(field[col][row].magnitude() > 2)
-							{
-								g.drawLine(col, row, col, row);
-								field[col][row].outsideRange();
-							}
-						}
+						g.drawLine(col, row, col, row);
+						field[col][row].outsideRange();
 					}
 				}
 			}
 		}
+
+		if(numIter >= BASE_NUM_ITERATIONS + numIterAdded)
+		{
+			time.stop();
+		}
 	}
-	
+
+	public void setup()
+	{
+		baseColor = ORIGINAL_BASE_COLOR;
+		hue = 360;
+
+		c = new Complex(cReal, cImaginary);
+		field = new Complex[SIZE_X][SIZE_Y];
+		baseField = null;
+		if(IS_MANDELBROT)
+		{
+			for(int i = 0; i < SIZE_X; i++)
+			{
+				for(int j = 0; j < SIZE_Y; j++)
+				{
+					field[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
+				}
+
+			}
+			baseField = new Complex[SIZE_X][SIZE_Y];
+			for(int i = 0; i < SIZE_X; i++)
+			{
+				for(int j = 0; j < SIZE_Y; j++)
+				{
+					baseField[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
+				}
+			}
+		}
+		else
+		{				
+			for(int i = 0; i < SIZE_X; i++)
+			{
+				for(int j = 0; j < SIZE_Y; j++)
+				{
+					field[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
+				}
+			}
+		}
+	}
+
 	public void makeImage()
 	{
 		System.out.println("started");
@@ -230,7 +239,7 @@ public class Julia extends JPanel implements MouseListener, KeyListener
 				}
 			}
 		}
-		
+
 		try
 		{
 			ImageIO.write(hugeImage, "PNG", new File("image.png"));
@@ -241,7 +250,7 @@ public class Julia extends JPanel implements MouseListener, KeyListener
 		}
 		System.out.println("made");
 	}
-	
+
 	public void mousePressed(MouseEvent e)
 	{
 		double x = e.getX();
@@ -253,20 +262,28 @@ public class Julia extends JPanel implements MouseListener, KeyListener
 		rangeY /= 4;
 
 		numIterAdded += ADD_ITER_PER_ZOOM;
-		repaint();
+		setup = true;
+		setup();
+		time.start();
 	}
-	
+
 	public void keyPressed(KeyEvent e)
 	{
 		if(e.getKeyChar() == 'q')
 		{			
 			numIterAdded += ADD_ITER_PER_ZOOM * 10;
-			repaint();
+			time.start();
 		}
 		else if(e.getKeyChar() == 'p')
 		{
 			makeImage();
 		}
+	}
+
+	public void actionPerformed(ActionEvent e)
+	{
+		numIter++;
+		repaint();
 	}
 
 	//Unimplemented methods
