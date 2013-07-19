@@ -15,7 +15,7 @@ public class FractalWindow extends JFrame
 		setLocationRelativeTo(null);
 		setTitle("Fractal Generator");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		getContentPane().add(new Julia());
+		getContentPane().add(new Fractal());
 		pack();
 		
 		setVisible(true);

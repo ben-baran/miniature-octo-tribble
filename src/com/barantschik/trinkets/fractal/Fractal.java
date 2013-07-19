@@ -23,7 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Julia extends JPanel implements MouseListener, KeyListener, ActionListener
+public class Fractal extends JPanel implements MouseListener, KeyListener, ActionListener
 {
 	private static final long serialVersionUID = 1L;
 
@@ -49,7 +49,7 @@ public class Julia extends JPanel implements MouseListener, KeyListener, ActionL
 
 	private Timer time = new Timer(0, this);
 
-	public Julia()
+	public Fractal()
 	{
 		cReal = 0;
 		cImaginary = 0;
