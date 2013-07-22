@@ -100,7 +100,7 @@ public class Fractal extends JPanel implements MouseListener, KeyListener, Actio
 				{
 					field[col][row].square();
 					if(IS_MANDELBROT) field[col][row].add(baseField[col][row]);
-					else field[col][row].add(c);
+					field[col][row].add(c);
 
 					if(field[col][row].magnitude() > 2)
 					{

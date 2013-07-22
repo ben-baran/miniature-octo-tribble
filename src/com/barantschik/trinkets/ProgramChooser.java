@@ -42,6 +42,11 @@ public class ProgramChooser extends JFrame implements ActionListener
 		conway.addActionListener(this);
 		conway.setAlignmentX(Component.CENTER_ALIGNMENT);
 		getContentPane().add(conway);
+		
+		JButton raytracer = new JButton("Open Raytracer");
+		raytracer.addActionListener(this);
+		raytracer.setAlignmentX(Component.CENTER_ALIGNMENT);
+		getContentPane().add(raytracer);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -57,6 +62,10 @@ public class ProgramChooser extends JFrame implements ActionListener
 		else if(e.getActionCommand().equals("Open Conway's Game of Life"))
 		{
 			new com.barantschik.trinkets.conway.GameWindow();
+		}
+		else if(e.getActionCommand().equals("Open Raytracer"))
+		{
+			new com.barantschik.trinkets.raytracer.Raytracer();
 		}
 	}
 }
