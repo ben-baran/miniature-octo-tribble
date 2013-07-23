@@ -10,18 +10,13 @@ import javax.swing.JFrame;
 
 public class Raytracer extends JFrame implements KeyListener
 {
-	private final int PIXEL_X = 500, PIXEL_Y = 500;
+	private final int PIXEL_X = 250, PIXEL_Y = 250;
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	
 	private boolean start = false;
 	private Camera c;
 	private Renderable renderable[] = new Renderable[6];
 	private Light lights[] = new Light[1];
-
-	public static void main(String[] args)
-	{
-		new Raytracer();
-	}
 
 	public Raytracer()
 	{
@@ -39,7 +34,7 @@ public class Raytracer extends JFrame implements KeyListener
 		renderable[2] = new Sphere(new double[]{-2.5, 0, 15}, 1.5, new float[]{0, 0, 0.7f});
 		renderable[3] = new Sphere(new double[]{0, 2.5, 15}, 1.5, new float[]{.6f, 0.6f, 0});
 		renderable[4] = new Sphere(new double[]{0, -2.5, 15}, 1.5, new float[]{0, 0.6f, 0.6f});
-		renderable[5] = new Triangle(new double[]{0, -15, 0}, new double[]{0, -15, 1}, new double[]{1, -15, 0}, new float[]{1, 0, 0});
+		renderable[5] = new Triangle(new double[]{0, -30, 1}, new double[]{0, -30, 0}, new double[]{1, -30, 0}, new float[]{0, 1, 0});
 		
 		lights[0] = new Light(new double[]{0, 0, 0}, new double[]{1, 1, 1});
 	}
@@ -95,11 +90,24 @@ public class Raytracer extends JFrame implements KeyListener
 			start = true;
 			repaint();
 		}
+		else if(e.getKeyCode() == KeyEvent.VK_UP)
+		{
+			c.move(new double[]{0, 0.1, 0});
+			start = true;
+			repaint();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			c.move(new double[]{0, -0.1, 0});
+			start = true;
+			repaint();
+		}
 		else
 		{			
 			start = true;
 			repaint();
 		}
+		lights[0].pos = c.pos;
 	}
 
 	//Unimplemented methods

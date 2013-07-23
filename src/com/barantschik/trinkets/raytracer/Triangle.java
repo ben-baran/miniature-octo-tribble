@@ -17,6 +17,7 @@ public class Triangle implements Renderable
 		this.color = color;
 		
 		normal = GMath.normalize(GMath.cross(GMath.subtract(v1, v3), GMath.subtract(v1, v2)));
+		System.out.println(normal[0] + ", " + normal[1] + ", " + normal[2]);
 	}
 	
 	public double giveIntersection(Ray r)
@@ -25,7 +26,10 @@ public class Triangle implements Renderable
 		if(dirDotN != 0)
 		{
 			double t = GMath.dot(normal, GMath.subtract(r.pos, v1)) / dirDotN;
-			return 100;
+			if(t > 0)
+			{
+				
+			}
 		}
 		return Double.NaN;
 	}

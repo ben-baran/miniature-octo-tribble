@@ -13,7 +13,7 @@ public abstract class RMath
 	private static final float AMBIENT_LIGHT = 0.2f;
 	private static final double INTENSITY_MULTIPLIER = 0.5;
 	
-	private static final double FLOAT_ADJUST = 0.01;
+	private static final double FLOAT_ADJUST = 0.001;
 
 	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
 	{
@@ -39,13 +39,16 @@ public abstract class RMath
 
 	private static boolean inShadow(double[] p, Light light, Renderable[] renderableList)
 	{
-		Ray original = new Ray(p, GMath.subtract(p, light.pos));
+		double[] difference = GMath.subtract(p, light.pos);
+		double distance = GMath.getMag(difference);
+		Ray original = new Ray(p, difference);
 		Ray r = new Ray(GMath.add(p, GMath.mult(original.dir, FLOAT_ADJUST)), original.dir);
 		for(Renderable renderable : renderableList)
 		{
 			double solution = renderable.giveIntersection(r);
-			if(!Double.isNaN(solution) && solution > 0)
+			if(!Double.isNaN(solution) && solution > 0 && solution < distance)
 			{
+				System.out.println(solution);
 				return true;
 			}
 		}
