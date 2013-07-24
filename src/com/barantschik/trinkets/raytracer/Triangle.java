@@ -5,6 +5,7 @@ public class Triangle implements Renderable
 	private double specularity = 50;
 	
 	double[] v1, v2, v3;
+	double[] bMinA, cMinA;
 	private float[] color;
 	private double[] normal;
 	
@@ -14,10 +15,12 @@ public class Triangle implements Renderable
 		this.v2 = v2;
 		this.v3 = v3;
 		
+		bMinA = GMath.subtract(v1, v2);
+		cMinA = GMath.subtract(v1, v3);
+		
 		this.color = color;
 		
 		normal = GMath.normalize(GMath.cross(GMath.subtract(v1, v3), GMath.subtract(v1, v2)));
-		System.out.println(normal[0] + ", " + normal[1] + ", " + normal[2]);
 	}
 	
 	public double giveIntersection(Ray r)
@@ -28,7 +31,13 @@ public class Triangle implements Renderable
 			double t = GMath.dot(normal, GMath.subtract(r.pos, v1)) / dirDotN;
 			if(t > 0)
 			{
-				
+				M3x3 inverseMatrix = GMath.findInverseMatrix(GMath.constructMatrix(bMinA, cMinA, GMath.negative(r.dir)));
+				double[] solution = GMath.mult(inverseMatrix, GMath.subtract(v1, r.pos));
+//				System.out.println(t + ", " + solution[2] + ": " + solution[0] + ", " + solution[1]);
+				if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
+				{
+					return t;
+				}
 			}
 		}
 		return Double.NaN;

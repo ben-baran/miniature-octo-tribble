@@ -48,7 +48,6 @@ public abstract class RMath
 			double solution = renderable.giveIntersection(r);
 			if(!Double.isNaN(solution) && solution > 0 && solution < distance)
 			{
-				System.out.println(solution);
 				return true;
 			}
 		}
