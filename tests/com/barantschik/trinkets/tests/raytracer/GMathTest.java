@@ -106,4 +106,30 @@ public class GMathTest
 		double test2Solution = 554.79474;
 		assertTrue("The determinant of this matrix should be 554.8", acceptable(test2Solution, GMath.det(test2)));
 	}
+
+	@Test
+	public void testFindCofactors()
+	{
+		double[][] test1Values = {{3, 0, 2},
+								  {2, 0, -2},
+								  {0, 1, 1}};
+		M3x3 test1 = new M3x3(test1Values);
+		double[][] test1Solution = {{2, -2, 2},
+									{2, 3, -3},
+									{0, 10, 0}};
+		assertTrue("This should output the correct cofactor matrix", acceptable(test1Solution, GMath.getCofactors(test1).values));
+	}
+
+	@Test
+	public void testFindInverse()
+	{
+		double[][] test1Values = {{3, 0, 2},
+				  				  {2, 0, -2},
+				  				  {0, 1, 1}};
+		M3x3 test1 = new M3x3(test1Values);
+		double[][] test1Solution = {{0.2, 0.2, 0},
+									{-0.2, 0.3, 1},
+									{0.2, -0.3, 0}};
+		assertTrue("This should output the correct inverse matrix", acceptable(test1Solution, GMath.findInverseMatrix(test1).values));
+	}
 }

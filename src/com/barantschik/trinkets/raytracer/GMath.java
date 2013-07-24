@@ -88,7 +88,7 @@ public abstract class GMath
 		{
 			for(int j = 0; j < 3; j++)
 			{
-				matrix.values[i][j] = matrix.values[i][j] / scal;
+				matrix.values[i][j] = matrix.values[i][j] * scal;
 			}
 		}
 		return matrix;
