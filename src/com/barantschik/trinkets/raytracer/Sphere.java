@@ -2,17 +2,31 @@ package com.barantschik.trinkets.raytracer;
 
 public class Sphere implements Renderable
 {
+	private static final double DEFAULT_SHININESS = 50;
+	private double shininess = 50;
+	
 	double[] pos;
 	double radius;
-	private float[] color;
-	
-	private double specularity = 50;
+	private float[] diffuse;
+	private float[] specular;
 	
 	public Sphere(double[] pos, double radius, float[] color)
 	{
+		this(pos, radius, color, color);
+	}
+	
+	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular)
+	{
+		this(pos, radius, diffuse, specular, DEFAULT_SHININESS);
+	}
+	
+	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess)
+	{
 		this.pos = pos;
 		this.radius = radius;
-		this.color = color;
+		this.diffuse = diffuse;
+		this.specular = specular;
+		this.shininess = shininess;
 	}
 
 	public double giveIntersection(Ray r)
@@ -42,16 +56,6 @@ public class Sphere implements Renderable
 	{
 		return GMath.normalize(GMath.subtract(pos, point));
 	}
-
-	public float[] getColor()
-	{
-		return color;
-	}
-
-	public double getSpecularity()
-	{
-		return specularity;
-	}
 	
 	public void move(double x, double y, double z)
 	{
@@ -63,5 +67,21 @@ public class Sphere implements Renderable
 	public void transform(M4x4 transform)
 	{
 		//not implemented yet
+	}
+
+	
+	public double getShininess()
+	{
+		return shininess;
+	}
+
+	public float[] getDiffuse()
+	{
+		return diffuse;
+	}
+
+	public float[] getSpecular()
+	{
+		return specular;
 	}
 }

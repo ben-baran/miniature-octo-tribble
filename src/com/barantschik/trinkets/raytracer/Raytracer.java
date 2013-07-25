@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 
 public class Raytracer extends JFrame implements KeyListener
 {
-	private final int PIXEL_X = 500, PIXEL_Y = 500;
+	private final int PIXEL_X = 250, PIXEL_Y = 250;
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	
 	private boolean start = false;
@@ -98,7 +98,6 @@ public class Raytracer extends JFrame implements KeyListener
 			start = true;
 			repaint();
 		}
-//		lights[0].pos = c.pos;
 	}
 
 	//Unimplemented methods

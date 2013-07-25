@@ -2,14 +2,28 @@ package com.barantschik.trinkets.raytracer;
 
 public class Triangle implements Renderable
 {
-	private double specularity = 50;
+	private static final double DEFAULT_SHININESS = 50;
+	private double shininess;
 	
 	double[] v1, v2, v3;
 	double[] bMinA, cMinA;
-	private float[] color;
+	
+	private float[] diffuse;
+	private float[] specular;
+	
 	private double[] normal;
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] color)
+	{
+		this(v1, v2, v3, color, color);
+	}
+	
+	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular)
+	{
+		this(v1, v2, v3, diffuse, specular, DEFAULT_SHININESS);
+	}
+	
+	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess)
 	{
 		this.v1 = v1;
 		this.v2 = v2;
@@ -18,9 +32,12 @@ public class Triangle implements Renderable
 		bMinA = GMath.subtract(v1, v2);
 		cMinA = GMath.subtract(v1, v3);
 		
-		this.color = color;
+		this.diffuse = diffuse;
+		this.specular = specular;
 		
 		normal = GMath.normalize(GMath.cross(GMath.subtract(v1, v3), GMath.subtract(v1, v2)));
+		
+		this.shininess = shininess;
 	}
 	
 	public double giveIntersection(Ray r)
@@ -48,16 +65,6 @@ public class Triangle implements Renderable
 		return normal;
 	}
 
-	public float[] getColor()
-	{
-		return color;
-	}
-
-	public double getSpecularity()
-	{
-		return specularity;
-	}
-
 	public void move(double x, double y, double z)
 	{
 		double[] container = {x, y, z};
@@ -71,4 +78,20 @@ public class Triangle implements Renderable
 		//not implemented yet
 	}
 
+
+	public double getShininess()
+	{
+		return shininess;
+	}
+
+	public float[] getDiffuse()
+	{
+		return diffuse;
+	}
+
+
+	public float[] getSpecular()
+	{
+		return specular;
+	}
 }

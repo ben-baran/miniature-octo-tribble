@@ -29,8 +29,8 @@ public class Scene
 			renderable[3] = new Sphere(new double[]{0, 2.5, 15}, 1.5, new float[]{.6f, 0.6f, 0});
 			renderable[4] = new Sphere(new double[]{0, -2.5, 15}, 1.5, new float[]{0, 0.6f, 0.6f});
 			
-			renderable[5] = new Triangle(new double[]{-1, 5, -1}, new double[]{-1, 5, 1}, new double[]{1, 5, 1}, new float[]{0, 1, 0});
-			renderable[6] = new Triangle(new double[]{1, 5, 1}, new double[]{1, 5, -1}, new double[]{-1, 5, -1}, new float[]{0, 1, 0});
+			renderable[5] = new Triangle(new double[]{-1, 5, -1}, new double[]{-1, 7, 1}, new double[]{1, 5, 1}, new float[]{0, 1, 0});
+			renderable[6] = new Triangle(new double[]{1, 5, 1}, new double[]{1, 7, -1}, new double[]{-1, 5, -1}, new float[]{0, 1, 0});
 		}
 	}
 

@@ -6,7 +6,7 @@ import java.awt.Image;
 
 public abstract class RMath
 {
-	private static final int NUM_SSAA = 2;
+	private static final int NUM_SSAA = 1;
 	private static final double NUM_SSAA_INV = 1.0 / NUM_SSAA;
 	private static final double NUM_SSAA_MAP = NUM_SSAA * NUM_SSAA;
 
@@ -90,15 +90,15 @@ public abstract class RMath
 								if(!inShadow(point, lights[lightNum], renderable))
 								{					
 									float diffuseIntensity = (float) Math.max(GMath.dot(normal, GMath.normalize(GMath.subtract(point, lights[lightNum].pos))), 0);
-									float specularIntensity = (float) Math.pow(Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, GMath.subtract(point, lights[lightNum].pos), normal)), 0), interData.renderable.getSpecularity());
+									float specularIntensity = (float) Math.pow(Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, GMath.subtract(point, lights[lightNum].pos), normal)), 0), interData.renderable.getShininess());
 									intensity += INTENSITY_MULTIPLIER * (diffuseIntensity + specularIntensity);
 								}
 							}
 							intensity += AMBIENT_LIGHT;
 							
-							averageR += Math.min(interData.renderable.getColor()[0] * intensity, 1.0f);
-							averageG += Math.min(interData.renderable.getColor()[1] * intensity, 1.0f);
-							averageB += Math.min(interData.renderable.getColor()[2] * intensity, 1.0f);
+							averageR += Math.min(interData.renderable.getDiffuse()[0] * intensity, 1.0f);
+							averageG += Math.min(interData.renderable.getDiffuse()[1] * intensity, 1.0f);
+							averageB += Math.min(interData.renderable.getDiffuse()[2] * intensity, 1.0f);
 						}
 					}
 				}
