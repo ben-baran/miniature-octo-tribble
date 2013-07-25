@@ -6,7 +6,7 @@ import java.awt.Image;
 
 public abstract class RMath
 {
-	private static final int NUM_SSAA = 1;
+	private static final int NUM_SSAA = 2;
 	private static final double NUM_SSAA_INV = 1.0 / NUM_SSAA;
 	private static final double NUM_SSAA_MAP = NUM_SSAA * NUM_SSAA;
 
@@ -54,6 +54,11 @@ public abstract class RMath
 		return false;
 	}
 
+	public static Image drawScene(Scene s, Image image)
+	{
+		return drawScene(s.getC(), s.getLights(), s.getRenderable(), image);
+	}
+	
 	public static Image drawScene(Camera c, Light[] lights, Renderable[] renderable, Image image)
 	{
 		int width = image.getWidth(null), height = image.getHeight(null);
