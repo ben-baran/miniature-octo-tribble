@@ -9,6 +9,7 @@ public class Sphere implements Renderable
 	double radius;
 	private float[] diffuse;
 	private float[] specular;
+	private float[] ambient;
 	private float[] emmissive;
 	
 	public Sphere(double[] pos, double radius, float[] color)
@@ -26,13 +27,19 @@ public class Sphere implements Renderable
 		this(pos, radius, diffuse, specular, shininess, new float[]{0, 0, 0});
 	}
 
-	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] emmissive)
+	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] ambient)
+	{
+		this(pos, radius, diffuse, specular, shininess, ambient, new float[]{0, 0, 0});
+	}
+	
+	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive)
 	{
 		this.pos = pos;
 		this.radius = radius;
 		this.diffuse = diffuse;
 		this.specular = specular;
 		this.shininess = shininess;
+		this.ambient = ambient;
 		this.emmissive = emmissive;
 	}
 	
@@ -91,8 +98,14 @@ public class Sphere implements Renderable
 		return specular;
 	}
 
+	public float[] getAmbient()
+	{
+		return ambient;
+	}
+	
 	public float[] getEmissive()
 	{
 		return emmissive;
 	}
+
 }

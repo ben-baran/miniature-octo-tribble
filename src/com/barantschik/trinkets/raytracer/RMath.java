@@ -27,11 +27,6 @@ public abstract class RMath
 		return new IntersectionData(shortestPath, curShortest);
 	}
 
-	//	private static double[] getColorValue(Ray r, Renderable[] renderableList)
-	//	{
-	//		return null;
-	//	}
-
 	private static boolean inShadow(double[] p, Light light, Renderable[] renderableList)
 	{
 		double[] difference = GMath.subtract(p, light.pos);
@@ -72,28 +67,9 @@ public abstract class RMath
 					Ray r = rays[rNum];
 
 					IntersectionData interData = findIntersection(r, renderable);
-					if(interData.renderable != null)
-					{							
-						float intensity = 0;
-						double[] point = r.makeVector(interData.t);
-						double[] normal = interData.renderable.getNormal(point);
-						double[] viewVector = GMath.subtract(point, r.pos);
+					float[] curColor = getColorValue(interData, r, s);
 
-						for(int lightNum = 0; lightNum < lights.length; lightNum++)
-						{
-							if(!inShadow(point, lights[lightNum], renderable))
-							{					
-								float diffuseIntensity = (float) Math.max(GMath.dot(normal, GMath.normalize(GMath.subtract(point, lights[lightNum].pos))), 0);
-								float specularIntensity = (float) Math.pow(Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, GMath.subtract(point, lights[lightNum].pos), normal)), 0), interData.renderable.getShininess());
-								intensity += INTENSITY_MULTIPLIER * (diffuseIntensity + specularIntensity);
-							}
-						}
-						intensity += s.getSP().getAmbient();
-
-						colors[rNum][0] = Math.min(interData.renderable.getDiffuse()[0] * intensity, 1.0f);
-						colors[rNum][1] = Math.min(interData.renderable.getDiffuse()[1] * intensity, 1.0f);
-						colors[rNum][2] = Math.min(interData.renderable.getDiffuse()[2] * intensity, 1.0f);
-					}
+					colors[rNum] = curColor;
 				}
 				float[] pixelcolor = s.getSP().getAAProvider().createPixelData(colors).color;
 				g.setColor(new Color(pixelcolor[0], pixelcolor[1], pixelcolor[2]));
@@ -101,5 +77,43 @@ public abstract class RMath
 			}
 		}
 		return image;
+	}
+
+	public static float[] getColorValue(IntersectionData interData, Ray r, Scene s)
+	{
+		Light[] lights = s.getLights();
+		Renderable[] renderable = s.getRenderable();
+
+		if(interData.renderable == null)
+		{
+			return new float[]{0, 0, 0};
+		}
+
+		float[] colorVal = new float[3];
+		colorVal = interData.renderable.getAmbient();
+		colorVal = GMath.add(colorVal, interData.renderable.getEmissive());
+
+		double[] point = r.makeVector(interData.t);
+		double[] normal = interData.renderable.getNormal(point);
+		double[] viewVector = GMath.subtract(point, r.pos);
+
+		for(int lightNum = 0; lightNum < lights.length; lightNum++)
+		{
+			if(!inShadow(point, lights[lightNum], renderable))
+			{					
+				float[] diffuse = GMath.mult(interData.renderable.getDiffuse(), (float) Math.max(GMath.dot(normal, GMath.normalize(GMath.subtract(point, lights[lightNum].pos))), 0));
+				float specDot = (float)  Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, GMath.subtract(point, lights[lightNum].pos), normal)), 0);
+				float[] specular = GMath.mult(interData.renderable.getDiffuse(), (float) Math.pow(specDot, interData.renderable.getShininess()));
+
+				colorVal = GMath.add(colorVal, diffuse);
+				colorVal = GMath.add(colorVal, specular);
+			}
+		}
+
+		colorVal[0] = Math.min(colorVal[0], 1);
+		colorVal[1] = Math.min(colorVal[1], 1);
+		colorVal[2] = Math.min(colorVal[2], 1);
+
+		return colorVal;
 	}
 }

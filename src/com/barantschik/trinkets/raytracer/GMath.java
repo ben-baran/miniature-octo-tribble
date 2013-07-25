@@ -76,7 +76,14 @@ public abstract class GMath
 
 	public static double[] mult(double[] vals, double scal)
 	{
-		vals = Arrays.copyOf(vals,  vals.length);
+		vals = Arrays.copyOf(vals, vals.length);
+		for(int i = 0; i < vals.length; i++) vals[i] *= scal;
+		return vals;
+	}
+	
+	public static float[] mult(float[] vals, float scal)
+	{
+		vals = Arrays.copyOf(vals, vals.length);
 		for(int i = 0; i < vals.length; i++) vals[i] *= scal;
 		return vals;
 	}
@@ -114,6 +121,20 @@ public abstract class GMath
 		return a;
 	}
 
+	public static float[] add(float[]... vals)
+	{
+		vals = Arrays.copyOf(vals, vals.length);
+		float[] total = new float[vals[0].length];
+		for(float[] fA : vals)
+		{
+			for(int i = 0; i < fA.length; i++)
+			{
+				total[i] += fA[i];
+			}
+		}
+		return total;
+	}
+	
 	public static double[] add(double[]... vals)
 	{
 		vals = Arrays.copyOf(vals, vals.length);

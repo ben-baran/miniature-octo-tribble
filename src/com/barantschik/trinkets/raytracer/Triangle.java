@@ -10,6 +10,7 @@ public class Triangle implements Renderable
 	
 	private float[] diffuse;
 	private float[] specular;
+	private float[] ambient;
 	private float[] emmissive;
 	
 	private double[] normal;
@@ -29,7 +30,12 @@ public class Triangle implements Renderable
 		this(v1, v2, v3, diffuse, specular, shininess, new float[]{0, 0, 0});
 	}
 	
-	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] emmissive)
+	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient)
+	{
+		this(v1, v2, v3, diffuse, specular, shininess, ambient, new float[]{0, 0, 0});
+	}
+	
+	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive)
 	{
 		this.v1 = v1;
 		this.v2 = v2;
@@ -45,6 +51,7 @@ public class Triangle implements Renderable
 		
 		this.shininess = shininess;
 		
+		this.ambient = ambient;
 		this.emmissive = emmissive;
 	}
 	
@@ -101,8 +108,14 @@ public class Triangle implements Renderable
 		return specular;
 	}
 
+	public float[] getAmbient()
+	{
+		return ambient;
+	}
+	
 	public float[] getEmissive()
 	{
 		return emmissive;
 	}
+
 }
