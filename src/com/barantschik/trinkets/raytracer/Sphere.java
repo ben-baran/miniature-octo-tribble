@@ -9,6 +9,7 @@ public class Sphere implements Renderable
 	double radius;
 	private float[] diffuse;
 	private float[] specular;
+	private float[] emmissive;
 	
 	public Sphere(double[] pos, double radius, float[] color)
 	{
@@ -22,13 +23,19 @@ public class Sphere implements Renderable
 	
 	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess)
 	{
+		this(pos, radius, diffuse, specular, shininess, new float[]{0, 0, 0});
+	}
+
+	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] emmissive)
+	{
 		this.pos = pos;
 		this.radius = radius;
 		this.diffuse = diffuse;
 		this.specular = specular;
 		this.shininess = shininess;
+		this.emmissive = emmissive;
 	}
-
+	
 	public double giveIntersection(Ray r)
 	{
 		double posdif[] = GMath.subtract(pos, r.pos);
@@ -69,7 +76,6 @@ public class Sphere implements Renderable
 		//not implemented yet
 	}
 
-	
 	public double getShininess()
 	{
 		return shininess;
@@ -83,5 +89,10 @@ public class Sphere implements Renderable
 	public float[] getSpecular()
 	{
 		return specular;
+	}
+
+	public float[] getEmissive()
+	{
+		return emmissive;
 	}
 }

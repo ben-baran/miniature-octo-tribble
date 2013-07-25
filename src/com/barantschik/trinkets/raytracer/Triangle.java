@@ -10,6 +10,7 @@ public class Triangle implements Renderable
 	
 	private float[] diffuse;
 	private float[] specular;
+	private float[] emmissive;
 	
 	private double[] normal;
 	
@@ -25,6 +26,11 @@ public class Triangle implements Renderable
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess)
 	{
+		this(v1, v2, v3, diffuse, specular, shininess, new float[]{0, 0, 0});
+	}
+	
+	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] emmissive)
+	{
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;
@@ -38,6 +44,8 @@ public class Triangle implements Renderable
 		normal = GMath.normalize(GMath.cross(GMath.subtract(v1, v3), GMath.subtract(v1, v2)));
 		
 		this.shininess = shininess;
+		
+		this.emmissive = emmissive;
 	}
 	
 	public double giveIntersection(Ray r)
@@ -78,7 +86,6 @@ public class Triangle implements Renderable
 		//not implemented yet
 	}
 
-
 	public double getShininess()
 	{
 		return shininess;
@@ -89,9 +96,13 @@ public class Triangle implements Renderable
 		return diffuse;
 	}
 
-
 	public float[] getSpecular()
 	{
 		return specular;
+	}
+
+	public float[] getEmissive()
+	{
+		return emmissive;
 	}
 }

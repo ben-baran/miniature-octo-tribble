@@ -6,13 +6,8 @@ import java.awt.Image;
 
 public abstract class RMath
 {
-	private static final int NUM_SSAA = 1;
-	private static final double NUM_SSAA_INV = 1.0 / NUM_SSAA;
-	private static final double NUM_SSAA_MAP = NUM_SSAA * NUM_SSAA;
-
-	private static final float AMBIENT_LIGHT = 0.2f;
 	private static final double INTENSITY_MULTIPLIER = 0.5;
-	
+
 	private static final double FLOAT_ADJUST = 0.001;
 
 	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
@@ -32,10 +27,10 @@ public abstract class RMath
 		return new IntersectionData(shortestPath, curShortest);
 	}
 
-//	private static double[] getColorValue(Ray r, Renderable[] renderableList)
-//	{
-//		return null;
-//	}
+	//	private static double[] getColorValue(Ray r, Renderable[] renderableList)
+	//	{
+	//		return null;
+	//	}
 
 	private static boolean inShadow(double[] p, Light light, Renderable[] renderableList)
 	{
@@ -56,11 +51,9 @@ public abstract class RMath
 
 	public static Image drawScene(Scene s, Image image)
 	{
-		return drawScene(s.getC(), s.getLights(), s.getRenderable(), image);
-	}
-	
-	public static Image drawScene(Camera c, Light[] lights, Renderable[] renderable, Image image)
-	{
+		Light[] lights = s.getLights();
+		Renderable[] renderable = s.getRenderable();
+
 		int width = image.getWidth(null), height = image.getHeight(null);
 		Graphics g = image.getGraphics();
 
@@ -72,40 +65,38 @@ public abstract class RMath
 			for(int j = 0; j < height; j++)
 			{
 				float averageR = 0, averageG = 0, averageB = 0;
-				for(double addX = 0; addX < 1; addX += NUM_SSAA_INV)
+				Ray[] rays = s.getSP().getAAProvider().generateRays(i, j, s.getC(), s.getSP());
+				float[][] colors = new float[rays.length][3];
+				for(int rNum = 0; rNum < rays.length; rNum++)
 				{
-					for(double addY = 0; addY < 1; addY += NUM_SSAA_INV)
-					{
-						Ray r = c.makeRay(i + addX, j + addY, width, height);
-						IntersectionData interData = findIntersection(r, renderable);
-						if(interData.renderable != null)
-						{							
-							float intensity = 0;
-							double[] point = r.makeVector(interData.t);
-							double[] normal = interData.renderable.getNormal(point);
-							double[] viewVector = GMath.subtract(point, r.pos);
-							
-							for(int lightNum = 0; lightNum < lights.length; lightNum++)
-							{
-								if(!inShadow(point, lights[lightNum], renderable))
-								{					
-									float diffuseIntensity = (float) Math.max(GMath.dot(normal, GMath.normalize(GMath.subtract(point, lights[lightNum].pos))), 0);
-									float specularIntensity = (float) Math.pow(Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, GMath.subtract(point, lights[lightNum].pos), normal)), 0), interData.renderable.getShininess());
-									intensity += INTENSITY_MULTIPLIER * (diffuseIntensity + specularIntensity);
-								}
+					Ray r = rays[rNum];
+
+					IntersectionData interData = findIntersection(r, renderable);
+					if(interData.renderable != null)
+					{							
+						float intensity = 0;
+						double[] point = r.makeVector(interData.t);
+						double[] normal = interData.renderable.getNormal(point);
+						double[] viewVector = GMath.subtract(point, r.pos);
+
+						for(int lightNum = 0; lightNum < lights.length; lightNum++)
+						{
+							if(!inShadow(point, lights[lightNum], renderable))
+							{					
+								float diffuseIntensity = (float) Math.max(GMath.dot(normal, GMath.normalize(GMath.subtract(point, lights[lightNum].pos))), 0);
+								float specularIntensity = (float) Math.pow(Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, GMath.subtract(point, lights[lightNum].pos), normal)), 0), interData.renderable.getShininess());
+								intensity += INTENSITY_MULTIPLIER * (diffuseIntensity + specularIntensity);
 							}
-							intensity += AMBIENT_LIGHT;
-							
-							averageR += Math.min(interData.renderable.getDiffuse()[0] * intensity, 1.0f);
-							averageG += Math.min(interData.renderable.getDiffuse()[1] * intensity, 1.0f);
-							averageB += Math.min(interData.renderable.getDiffuse()[2] * intensity, 1.0f);
 						}
+						intensity += s.getSP().getAmbient();
+
+						colors[rNum][0] = Math.min(interData.renderable.getDiffuse()[0] * intensity, 1.0f);
+						colors[rNum][1] = Math.min(interData.renderable.getDiffuse()[1] * intensity, 1.0f);
+						colors[rNum][2] = Math.min(interData.renderable.getDiffuse()[2] * intensity, 1.0f);
 					}
 				}
-				averageR /= NUM_SSAA_MAP;
-				averageG /= NUM_SSAA_MAP;
-				averageB /= NUM_SSAA_MAP;
-				g.setColor(new Color(averageR, averageG, averageB));
+				float[] pixelcolor = s.getSP().getAAProvider().createPixelData(colors).color;
+				g.setColor(new Color(pixelcolor[0], pixelcolor[1], pixelcolor[2]));
 				g.fillRect(i, j, 1, 1);
 			}
 		}

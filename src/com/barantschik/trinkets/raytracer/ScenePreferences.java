@@ -3,25 +3,22 @@ package com.barantschik.trinkets.raytracer;
 public class ScenePreferences
 {
 	private int sizeX, sizeY;
-	private AntialiasingType aaType;
-	private int antialiasingMagnitude;
+	
+	private AAProvider aaProvider;
+	
+	private float ambient;
+	private double[] defaultAttenuation;
 	
 	public ScenePreferences(int sizeX, int sizeY)
 	{
-		this(sizeX, sizeY, AntialiasingType.NONE);
+		this(sizeX, sizeY, new NoAA());
 	}
 	
-	public ScenePreferences(int sizeX, int sizeY, AntialiasingType aaType)
-	{
-		this(sizeX, sizeY, aaType, 1);
-	}
-	
-	public ScenePreferences(int sizeX, int sizeY, AntialiasingType aaType, int antialiasingMagnitude)
+	public ScenePreferences(int sizeX, int sizeY, AAProvider aaProvider)
 	{
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
-		this.aaType = aaType;
-		this.antialiasingMagnitude = antialiasingMagnitude;
+		this.aaProvider = aaProvider;
 	}
 	
 	public int getSizeX()
@@ -44,25 +41,30 @@ public class ScenePreferences
 		this.sizeY = sizeY;
 	}
 	
-	public AntialiasingType getAAType()
+	public AAProvider getAAProvider()
 	{
-		return aaType;
+		return aaProvider;
 	}
 	
-	public void setAAType(AntialiasingType aaType)
+	public float getAmbient()
 	{
-		this.aaType = aaType;
+		return ambient;
+	}
+
+	public void setAmbient(float ambient)
+	{
+		this.ambient = ambient;
 	}
 
 	
-	public int getAntialiasingMagnitude()
+	public double[] getDefaultAttenuation()
 	{
-		return antialiasingMagnitude;
+		return defaultAttenuation;
 	}
-
 	
-	public void setAntialiasingMagnitude(int antialiasingMagnitude)
+
+	public void setDefaultAttenuation(double[] defaultAttenuation)
 	{
-		this.antialiasingMagnitude = antialiasingMagnitude;
+		this.defaultAttenuation = defaultAttenuation;
 	}
 }

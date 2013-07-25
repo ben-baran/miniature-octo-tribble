@@ -27,7 +27,7 @@ public class Raytracer extends JFrame implements KeyListener
 
 		addKeyListener(this);
 
-		s = new Scene(true);
+		s = new Scene(new ScenePreferences(PIXEL_X, PIXEL_Y, new SuperSamplingAA(2)), true);
 	}
 
 	public void paint(Graphics g)
