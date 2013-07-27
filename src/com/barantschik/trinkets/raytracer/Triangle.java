@@ -1,5 +1,7 @@
 package com.barantschik.trinkets.raytracer;
 
+import java.util.Arrays;
+
 public class Triangle implements Renderable
 {
 	private static final double DEFAULT_SHININESS = 50;
@@ -14,6 +16,11 @@ public class Triangle implements Renderable
 	private float[] emmissive;
 	
 	private double[] normal;
+	private double[] transformedNormal;
+	
+	private boolean transformed = false;
+	private M4x4 transformMatrix = M4x4.identity();
+	private M4x4 inverseTransformMatrix = M4x4.identity();
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] color)
 	{
@@ -48,6 +55,7 @@ public class Triangle implements Renderable
 		this.specular = specular;
 		
 		normal = GMath.normalize(GMath.cross(GMath.subtract(v1, v3), GMath.subtract(v1, v2)));
+		transformedNormal = Arrays.copyOf(normal, normal.length);
 		
 		this.shininess = shininess;
 		
@@ -57,27 +65,34 @@ public class Triangle implements Renderable
 	
 	public double giveIntersection(Ray r)
 	{
-		double dirDotN = GMath.dot(r.dir, normal);
-		if(dirDotN != 0)
+		if(!transformed)
 		{
-			double t = GMath.dot(normal, GMath.subtract(r.pos, v1)) / dirDotN;
-			if(t > 0)
+			double dirDotN = GMath.dot(r.dir, normal);
+			if(dirDotN != 0)
 			{
-				M3x3 inverseMatrix = GMath.findInverseMatrix(GMath.constructMatrix(bMinA, cMinA, GMath.negative(r.dir)));
-				double[] solution = GMath.mult(inverseMatrix, GMath.subtract(v1, r.pos));
-//				System.out.println(t + ", " + solution[2] + ": " + solution[0] + ", " + solution[1]);
-				if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
+				double t = GMath.dot(normal, GMath.subtract(r.pos, v1)) / dirDotN;
+				if(t > 0)
 				{
-					return t;
+					M3x3 inverseMatrix = GMath.findInverseMatrix(GMath.constructMatrix(bMinA, cMinA, GMath.negative(r.dir)));
+					double[] solution = GMath.mult(inverseMatrix, GMath.subtract(v1, r.pos));
+					
+					if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
+					{
+						return t;
+					}
 				}
 			}
+			return Double.NaN;
 		}
-		return Double.NaN;
+		else
+		{
+			return Double.NaN;
+		}
 	}
 
 	public double[] getNormal(double[] point)
 	{
-		return normal;
+		return transformedNormal;
 	}
 
 	public void move(double x, double y, double z)
@@ -90,7 +105,12 @@ public class Triangle implements Renderable
 
 	public void transform(M4x4 transform)
 	{
-		//not implemented yet
+		if(!transformed) transformed = true;
+		
+		transformMatrix = GMath.mult(transform, transformMatrix);
+		inverseTransformMatrix = GMath.findInverseMatrix(transformMatrix);
+
+		transformedNormal = GMath.mult(inverseTransformMatrix, GMath.createHomogenousDir(normal));
 	}
 
 	public double getShininess()

@@ -6,8 +6,6 @@ import java.awt.Image;
 
 public abstract class RMath
 {
-	private static final double INTENSITY_MULTIPLIER = 0.5;
-
 	private static final double FLOAT_ADJUST = 0.001;
 
 	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
@@ -29,14 +27,9 @@ public abstract class RMath
 
 	private static boolean inShadow(double[] p, Light light, Renderable[] renderableList)
 	{
-		double[] difference = GMath.subtract(p, light.pos);
-		double distance = GMath.getMag(difference);
-		Ray original = new Ray(p, difference);
-		Ray r = new Ray(GMath.add(p, GMath.mult(original.dir, FLOAT_ADJUST)), original.dir);
 		for(Renderable renderable : renderableList)
 		{
-			double solution = renderable.giveIntersection(r);
-			if(!Double.isNaN(solution) && solution > 0 && solution < distance)
+			if(light.blocked(p, renderable, FLOAT_ADJUST))
 			{
 				return true;
 			}
@@ -100,13 +93,18 @@ public abstract class RMath
 		for(int lightNum = 0; lightNum < lights.length; lightNum++)
 		{
 			if(!inShadow(point, lights[lightNum], renderable))
-			{					
-				float[] diffuse = GMath.mult(interData.renderable.getDiffuse(), (float) Math.max(GMath.dot(normal, GMath.normalize(GMath.subtract(point, lights[lightNum].pos))), 0));
-				float specDot = (float)  Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, GMath.subtract(point, lights[lightNum].pos), normal)), 0);
+			{
+				double[] directionalVector = lights[lightNum].directionalVector(point);
+				
+				float[] diffuse = GMath.mult(interData.renderable.getDiffuse(), (float) Math.max(GMath.dot(normal, GMath.normalize(directionalVector)), 0));
+				float specDot = (float)  Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, directionalVector, normal)), 0);
 				float[] specular = GMath.mult(interData.renderable.getDiffuse(), (float) Math.pow(specDot, interData.renderable.getShininess()));
 
-				colorVal = GMath.add(colorVal, diffuse);
-				colorVal = GMath.add(colorVal, specular);
+				
+				float[] lightIntensity = lights[lightNum].getIntensity(point);
+				float[] curVal = GMath.mult(GMath.add(diffuse, specular), lightIntensity);
+				
+				colorVal = GMath.add(colorVal, curVal);
 			}
 		}
 

@@ -45,6 +45,15 @@ public abstract class GMath
 		return a + b + c;
 	}
 	
+	public static double det(M4x4 matrix)
+	{
+		double a = matrix.values[0][0] * det(matrix.getMinor(0, 0));
+		double b = -matrix.values[1][0] * det(matrix.getMinor(1, 0));
+		double c = matrix.values[2][0] * det(matrix.getMinor(2, 0));
+		double d = -matrix.values[3][0] * det(matrix.getMinor(3, 0));
+		return a + b + c + d;
+	}
+	
 	public static double det(double a, double b, double c, double d)
 	{
 		return a * d - b * c;
@@ -74,6 +83,36 @@ public abstract class GMath
 		return total;
 	}
 
+	public static float dot(float[] a, float[] b)
+	{
+		float total = 0;
+		for(int i = 0; i < a.length; i++)
+		{
+			total += a[i] * b[i];
+		}
+		return total;
+	}
+
+	public static double[] mult(double[] a, double[] b)
+	{
+		double[] product = new double[a.length];
+		for(int i = 0; i < a.length; i++)
+		{
+			product[i] += a[i] * b[i];
+		}
+		return product;
+	}
+	
+	public static float[] mult(float[] a, float[] b)
+	{
+		float[] product = new float[a.length];
+		for(int i = 0; i < a.length; i++)
+		{
+			product[i] += a[i] * b[i];
+		}
+		return product;
+	}
+	
 	public static double[] mult(double[] vals, double scal)
 	{
 		vals = Arrays.copyOf(vals, vals.length);
@@ -101,6 +140,19 @@ public abstract class GMath
 		return matrix;
 	}
 	
+	public static M4x4 mult(M4x4 matrix, double scal)
+	{
+		matrix = new M4x4(matrix.values);
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				matrix.values[i][j] = matrix.values[i][j] * scal;
+			}
+		}
+		return matrix;
+	}
+	
 	public static double[] mult(M3x3 matrix, double[] vector)
 	{
 		double[] values = new double[3];
@@ -112,6 +164,35 @@ public abstract class GMath
 			}
 		}
 		return values;
+	}
+
+	public static double[] mult(M4x4 matrix, double[] vector)
+	{
+		double[] solution = new double[4];
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				solution[i] += matrix.values[i][j] * vector[j];
+			}
+		}
+		return solution;
+	}
+	
+	public static M4x4 mult(M4x4 a, M4x4 b)
+	{
+		M4x4 solution = new M4x4();
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				for(int k = 0; k < 4; k++)
+				{
+					solution.values[i][j] += a.values[i][k] * b.values[k][j];
+				}
+			}
+		}
+		return solution;
 	}
 	
 	public static double[] negative(double[] a)
@@ -201,6 +282,16 @@ public abstract class GMath
 		return null;
 	}
 	
+	public static M4x4 findInverseMatrix(M4x4 original)
+	{
+		double determinant = det(original);
+		if(determinant != 0)
+		{
+			return mult(getCofactors(findTranspose(original)), (1 / determinant));
+		}
+		return null;
+	}
+	
 	public static M3x3 getCofactors(M3x3 original)
 	{
 		double[][] values = new double[3][3];
@@ -215,6 +306,20 @@ public abstract class GMath
 		return new M3x3(values);
 	}
 	
+	public static M4x4 getCofactors(M4x4 original)
+	{
+		double[][] values = new double[4][4];
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				values[i][j] = det(original.getMinor(i, j));
+				if((i + j) % 2 == 1) values[i][j] = -values[i][j];
+			}
+		}
+		return new M4x4(values);
+	}
+	
 	public static M3x3 findTranspose(M3x3 original)
 	{
 		double[][] values = new double[3][3];
@@ -226,5 +331,61 @@ public abstract class GMath
 			}
 		}
 		return new M3x3(values);
+	}
+	
+	public static M4x4 findTranspose(M4x4 original)
+	{
+		double[][] values = new double[4][4];
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				values[i][j] = original.values[j][i];
+			}
+		}
+		return new M4x4(values);
+	}
+
+	public static double[] createHomogenousPos(double[] original)
+	{
+		double[] solution = new double[4];
+		for(int i = 0; i < 3; i++)
+		{
+			solution[i] = original[i];
+		}
+		solution[3] = 1;
+		return solution;
+	}
+	
+	public static double[] createHomogenousDir(double[] original)
+	{
+		double[] solution = new double[4];
+		for(int i = 0; i < 3; i++)
+		{
+			solution[i] = original[i];
+		}
+		return solution;
+	}
+
+	public static double[] dehomogenize(double[] original)
+	{
+		double[] solution = new double[3];
+		for(int i = 0; i < 3; i++)
+		{
+			solution[i] = original[i];
+		}
+		return solution;
+	}
+	
+	public static double findT(double[] vector, Ray r)
+	{
+		double[] difference = subtract(createHomogenousPos(r.pos), vector);
+		
+		for(int i = 0; i < 3; i++)
+		{
+			if(r.dir[i] != 0) return difference[i] / r.dir[i];
+		}
+		
+		return Double.NaN;
 	}
 }   

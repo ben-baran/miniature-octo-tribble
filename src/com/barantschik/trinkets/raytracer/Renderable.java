@@ -11,4 +11,5 @@ public interface Renderable
 	public float[] getEmissive();
 	public void move(double x, double y, double z);
 	public void transform(M4x4 transform);
+//	public void transformBefore(M4x4 transform);
 }

@@ -1,13 +1,8 @@
 package com.barantschik.trinkets.raytracer;
 
-public class Light
+public interface Light
 {
-	double[] pos;
-	double[] color;
-	
-	public Light(double[] pos, double[] color)
-	{
-		this.pos = pos;
-		this.color = color;
-	}
+	public float[] getIntensity(double[] point);
+	public boolean blocked(double[] point, Renderable renderable, double floatAdjust);
+	public double[] directionalVector(double[] point);
 }
