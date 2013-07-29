@@ -98,6 +98,7 @@ public class Raytracer extends JFrame implements KeyListener
 			start = true;
 			repaint();
 		}
+		System.out.println(s.getC().pos[0] + ", " + s.getC().pos[1] + ", " + s.getC().pos[2]);
 	}
 
 	//Unimplemented methods

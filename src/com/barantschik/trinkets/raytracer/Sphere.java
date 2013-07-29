@@ -3,7 +3,10 @@ package com.barantschik.trinkets.raytracer;
 public class Sphere implements Renderable
 {
 	private static final double DEFAULT_SHININESS = 50;
-	private double shininess = 50;
+	private double shininess;
+	
+	private static final float DEFAULT_REFLECTIVITY = 1;
+	private float reflectivity;
 	
 	double[] pos;
 	double radius;
@@ -15,7 +18,6 @@ public class Sphere implements Renderable
 	private boolean transformed = false;
 	private M4x4 transformMatrix = M4x4.identity();
 	private M4x4 inverseTransformMatrix = M4x4.identity();
-	private M4x4 inverseTransposedTransformMatrix = M4x4.identity();
 	
 	public Sphere(double[] pos, double radius, float[] color)
 	{
@@ -39,11 +41,17 @@ public class Sphere implements Renderable
 	
 	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive)
 	{
+		this(pos, radius, diffuse, specular, shininess, ambient, emmissive, DEFAULT_REFLECTIVITY);
+	}
+	
+	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive, float reflectivity)
+	{
 		this.pos = pos;
 		this.radius = radius;
 		this.diffuse = diffuse;
 		this.specular = specular;
 		this.shininess = shininess;
+		this.reflectivity = reflectivity;
 		this.ambient = ambient;
 		this.emmissive = emmissive;
 	}
@@ -113,8 +121,6 @@ public class Sphere implements Renderable
 		else
 		{
 			return GMath.normalize(GMath.subtract(pos, GMath.dehomogenize(GMath.mult(inverseTransformMatrix, GMath.createHomogenousPos(point)))));
-//			return GMath.normalize(GMath.subtract(pos, GMath.dehomogenize(GMath.mult(inverseTransposedTransformMatrix, GMath.createHomogenousDir(point)))));
-//			return GMath.dehomogenize(GMath.mult(inverseTransposedTransformMatrix, GMath.createHomogenousDir(GMath.normalize(GMath.subtract(pos, GMath.dehomogenize(GMath.mult(transformMatrix, GMath.createHomogenousPos(point))))))));
 		}
 	}
 	
@@ -131,7 +137,6 @@ public class Sphere implements Renderable
 		
 		transformMatrix = GMath.mult(transform, transformMatrix);
 		inverseTransformMatrix = GMath.findInverseMatrix(transformMatrix);
-		inverseTransposedTransformMatrix = GMath.findTranspose(inverseTransformMatrix);
 	}
 
 	public double getShininess()
@@ -139,6 +144,11 @@ public class Sphere implements Renderable
 		return shininess;
 	}
 
+	public float getReflectivity()
+	{
+		return reflectivity;
+	}
+	
 	public float[] getDiffuse()
 	{
 		return diffuse;

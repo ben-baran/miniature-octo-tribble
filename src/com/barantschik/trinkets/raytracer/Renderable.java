@@ -5,6 +5,7 @@ public interface Renderable
 	public double giveIntersection(Ray r);
 	public double[] getNormal(double[] point);
 	public double getShininess();
+	public float getReflectivity();
 	public float[] getDiffuse();
 	public float[] getSpecular();
 	public float[] getAmbient();

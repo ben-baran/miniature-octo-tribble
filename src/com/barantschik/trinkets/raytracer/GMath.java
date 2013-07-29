@@ -388,4 +388,14 @@ public abstract class GMath
 		
 		return Double.NaN;
 	}
+
+	public static double[] reflectRay(double[] d, double[] n)
+	{
+		return subtract(mult(mult(n, dot(d, n)), 2), d);
+	}
+
+	public static float[] capColor(float[] color)
+	{
+		return new float[]{Math.min(color[0], 1), Math.min(color[1], 1), Math.min(color[2], 1)};
+	}
 }   

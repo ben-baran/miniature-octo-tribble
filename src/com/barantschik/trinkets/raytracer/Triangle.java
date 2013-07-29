@@ -7,6 +7,9 @@ public class Triangle implements Renderable
 	private static final double DEFAULT_SHININESS = 50;
 	private double shininess;
 	
+	private static final float DEFAULT_REFLECTIVITY = 1;
+	private float reflectivity;
+	
 	double[] v1, v2, v3;
 	double[] bMinA, cMinA;
 	
@@ -21,6 +24,7 @@ public class Triangle implements Renderable
 	private boolean transformed = false;
 	private M4x4 transformMatrix = M4x4.identity();
 	private M4x4 inverseTransformMatrix = M4x4.identity();
+	private M4x4 inverseTransposedTransformMatrix = M4x4.identity();
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] color)
 	{
@@ -44,6 +48,11 @@ public class Triangle implements Renderable
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive)
 	{
+		this(v1, v2, v3, diffuse, specular, shininess, ambient, emmissive, DEFAULT_REFLECTIVITY);
+	}
+	
+	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive, float reflectivity)
+	{
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;
@@ -58,6 +67,7 @@ public class Triangle implements Renderable
 		transformedNormal = Arrays.copyOf(normal, normal.length);
 		
 		this.shininess = shininess;
+		this.reflectivity = reflectivity;
 		
 		this.ambient = ambient;
 		this.emmissive = emmissive;
@@ -86,6 +96,25 @@ public class Triangle implements Renderable
 		}
 		else
 		{
+			double[] transformedPos = GMath.mult(inverseTransformMatrix, GMath.createHomogenousPos(r.pos));
+			double[] transformedDir = GMath.mult(inverseTransformMatrix, GMath.createHomogenousDir(r.dir));
+			Ray rT = new Ray(transformedPos, transformedDir);
+			
+			double dirDotN = GMath.dot(rT.dir, normal);
+			if(dirDotN != 0)
+			{
+				double t = GMath.dot(normal, GMath.subtract(rT.pos, v1)) / dirDotN;
+				if(t > 0)
+				{
+					M3x3 inverseMatrix = GMath.findInverseMatrix(GMath.constructMatrix(bMinA, cMinA, GMath.negative(rT.dir)));
+					double[] solution = GMath.mult(inverseMatrix, GMath.subtract(v1, rT.pos));
+					
+					if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
+					{
+						return t;
+					}
+				}
+			}
 			return Double.NaN;
 		}
 	}
@@ -109,8 +138,9 @@ public class Triangle implements Renderable
 		
 		transformMatrix = GMath.mult(transform, transformMatrix);
 		inverseTransformMatrix = GMath.findInverseMatrix(transformMatrix);
-
-		transformedNormal = GMath.mult(inverseTransformMatrix, GMath.createHomogenousDir(normal));
+		inverseTransposedTransformMatrix = GMath.findTranspose(inverseTransformMatrix);
+		
+		transformedNormal = GMath.mult(inverseTransposedTransformMatrix, GMath.createHomogenousDir(normal));
 	}
 
 	public double getShininess()
@@ -118,6 +148,11 @@ public class Triangle implements Renderable
 		return shininess;
 	}
 
+	public float getReflectivity()
+	{
+		return reflectivity;
+	}
+	
 	public float[] getDiffuse()
 	{
 		return diffuse;

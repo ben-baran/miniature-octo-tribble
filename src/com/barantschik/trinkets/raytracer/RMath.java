@@ -7,7 +7,8 @@ import java.awt.Image;
 public abstract class RMath
 {
 	private static final double FLOAT_ADJUST = 0.001;
-
+	private static final int NUM_RECURSIVE = 5;
+	
 	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
 	{
 		double shortestPath = Double.POSITIVE_INFINITY;
@@ -59,8 +60,7 @@ public abstract class RMath
 				{
 					Ray r = rays[rNum];
 
-					IntersectionData interData = findIntersection(r, renderable);
-					float[] curColor = getColorValue(interData, r, s);
+					float[] curColor = getRecursiveColorValue(1, s, r);
 
 					colors[rNum] = curColor;
 				}
@@ -113,5 +113,31 @@ public abstract class RMath
 		colorVal[2] = Math.min(colorVal[2], 1);
 
 		return colorVal;
+	}
+
+	public static float[] getRecursiveColorValue(int n, Scene s, Ray r)
+	{
+		if(n == NUM_RECURSIVE)
+		{
+			return getColorValue(findIntersection(r, s.getRenderable()), r, s);
+		}
+		else
+		{
+			IntersectionData interData = findIntersection(r, s.getRenderable());
+			
+			if(interData.renderable != null)
+			{
+				double[] interPoint = r.makeVector(interData.t);
+				double[] difference = GMath.subtract(r.pos, interPoint);
+				Ray original = new Ray(interPoint, GMath.reflectRay(difference, interData.renderable.getNormal(interPoint)));
+				Ray reflected = new Ray(GMath.add(interPoint, GMath.mult(original.dir, FLOAT_ADJUST)), original.dir);
+				
+				return GMath.capColor(GMath.add(getColorValue(interData, r, s), GMath.mult(getRecursiveColorValue(n + 1, s, reflected), interData.renderable.getReflectivity())));
+			}
+			else
+			{
+				return new float[]{0, 0, 0};
+			}
+		}
 	}
 }
