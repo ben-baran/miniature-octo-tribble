@@ -20,7 +20,7 @@ import javax.swing.Timer;
 
 public class Conway extends JPanel implements MouseListener, MouseMotionListener, KeyListener, ActionListener
 {
-	private final int SIZE_X = 1500, SIZE_Y = 1500;
+	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	
 	private int numX = 500, numY = 500;
 	private int blockX = SIZE_X / numX, blockY = SIZE_Y / numY;
@@ -266,13 +266,10 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	
 	public void mouseDragged(MouseEvent e)
 	{
-		if(!running)
-		{			
-			int selectedX = e.getX() / blockX, selectedY = e.getY() / blockY;
-			map[selectedX][selectedY] = true;
-			premap[selectedX][selectedY] = map[selectedX][selectedY];
-			repaint();
-		}
+		int selectedX = e.getX() / blockX, selectedY = e.getY() / blockY;
+		map[selectedX][selectedY] = true;
+		premap[selectedX][selectedY] = map[selectedX][selectedY];
+		repaint();
 	}
 	
 	public Timer getTimer()

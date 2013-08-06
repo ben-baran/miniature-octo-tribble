@@ -398,4 +398,12 @@ public abstract class GMath
 	{
 		return new float[]{Math.min(color[0], 1), Math.min(color[1], 1), Math.min(color[2], 1)};
 	}
+
+	public static double average(double... values)
+	{		
+		double sum = 0;
+		for(double d : values) sum += d;
+		
+		return sum / values.length;
+	}
 }   

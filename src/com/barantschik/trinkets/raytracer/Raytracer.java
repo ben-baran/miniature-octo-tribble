@@ -10,12 +10,13 @@ import javax.swing.JFrame;
 
 public class Raytracer extends JFrame implements KeyListener
 {
-	private final int PIXEL_X = 250, PIXEL_Y = 250;
+	private final int PIXEL_X = 1000, PIXEL_Y = 1000;
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	
 	private boolean start = false;
 	
 	private Scene s;
+	private Image curImage = createImage(PIXEL_X, PIXEL_Y);
 	
 	public Raytracer()
 	{
@@ -27,7 +28,8 @@ public class Raytracer extends JFrame implements KeyListener
 
 		addKeyListener(this);
 
-		s = new Scene(new ScenePreferences(PIXEL_X, PIXEL_Y, new SuperSamplingAA(1)), true);
+		SSAA aa = new SSAA(2);
+		s = new Scene(new ScenePreferences(PIXEL_X, PIXEL_Y, aa), true);
 	}
 
 	public void paint(Graphics g)
@@ -37,18 +39,18 @@ public class Raytracer extends JFrame implements KeyListener
 
 	public void bufferPaint(Graphics h)
 	{
-		Image buffer = createImage(PIXEL_X, PIXEL_Y);
-		Graphics g = buffer.getGraphics();
+		curImage = createImage(PIXEL_X, PIXEL_Y);
+		Graphics g = curImage.getGraphics();
 		
 		g.setColor(Color.BLACK);
 		g.fillRect(0,  0, PIXEL_X, PIXEL_Y);
 		
 		if(start)
 		{
-			buffer = RMath.drawScene(s, buffer);
+			curImage = RMath.drawScene(s, curImage);
 		}
 		
-		h.drawImage(buffer, 0, 0, SIZE_X, SIZE_Y, null);
+		h.drawImage(curImage, 0, 0, SIZE_X, SIZE_Y, null);
 	}
 	
 	public void keyPressed(KeyEvent e)

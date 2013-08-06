@@ -7,7 +7,7 @@ import java.awt.Image;
 public abstract class RMath
 {
 	private static final double FLOAT_ADJUST = 0.001;
-	private static final int NUM_RECURSIVE = 5;
+	private static final int NUM_RECURSIVE = 1;
 	
 	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
 	{

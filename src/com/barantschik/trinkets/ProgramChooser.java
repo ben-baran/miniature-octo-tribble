@@ -20,12 +20,7 @@ public class ProgramChooser extends JFrame implements ActionListener
 	
 	public ProgramChooser()
 	{
-		setSize(SIZE_X, SIZE_Y);
-		setTitle("Trinkets");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setLocationRelativeTo(null);
-		setVisible(true);
-		
+//		setSize(SIZE_X, SIZE_Y);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		
 		JButton pathfinder = new JButton("Open PathFinder");
@@ -47,6 +42,13 @@ public class ProgramChooser extends JFrame implements ActionListener
 		raytracer.addActionListener(this);
 		raytracer.setAlignmentX(Component.CENTER_ALIGNMENT);
 		getContentPane().add(raytracer);
+		
+		pack();
+		
+		setTitle("Trinkets");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent e)

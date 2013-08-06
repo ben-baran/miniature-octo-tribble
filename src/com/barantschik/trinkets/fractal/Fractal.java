@@ -251,6 +251,101 @@ public class Fractal extends JPanel implements MouseListener, KeyListener, Actio
 		System.out.println("made");
 	}
 
+	public void makeLargeImage()
+	{
+		System.out.println("started");
+		final int SIZE_X = 10000, SIZE_Y = 10000;
+		BufferedImage hugeImage = new BufferedImage(SIZE_X, SIZE_Y, BufferedImage.TYPE_INT_RGB);
+		Graphics g = hugeImage.getGraphics();
+		baseColor = ORIGINAL_BASE_COLOR;
+		hue = 360;
+
+		g.setColor(PRISONER_COLOR);
+		g.fillRect(0, 0, SIZE_X, SIZE_Y);
+		g.setColor(baseColor);
+
+		Complex c = new Complex(cReal, cImaginary);
+		Complex[][] field = new Complex[SIZE_X][SIZE_Y];
+		Complex[][] baseField = null;
+		if(IS_MANDELBROT)
+		{
+			for(int i = 0; i < SIZE_X; i++)
+			{
+				for(int j = 0; j < SIZE_Y; j++)
+				{
+					field[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
+				}
+
+			}
+			baseField = new Complex[SIZE_X][SIZE_Y];
+			for(int i = 0; i < SIZE_X; i++)
+			{
+				for(int j = 0; j < SIZE_Y; j++)
+				{
+					baseField[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
+				}
+			}
+		}
+		else
+		{				
+			for(int i = 0; i < SIZE_X; i++)
+			{
+				for(int j = 0; j < SIZE_Y; j++)
+				{
+					field[i][j] = new Complex(((2 * rangeX * (i / (double) SIZE_X) - rangeX) + centerX), (-(2 * rangeY * (j / (double) SIZE_Y) - rangeY) + centerY));
+				}
+			}
+		}
+
+		for(int i = 0; i < BASE_NUM_ITERATIONS + numIterAdded; i++)
+		{
+			if(hue == 0) hue = 360;
+			//Random r = new Random();
+			//hue = r.nextInt(360) + 1;
+			hue -= 4;
+			double hNew = hue / 60.0;
+			double x = 1 - Math.abs((hNew % 2) - 1);
+			float brightness = 1;
+			if(hNew >= 0 && hNew < 1) baseColor = new Color(brightness, (float) x * brightness, 0.0f);
+			else if(hNew >= 0 && hNew < 1) baseColor = new Color(brightness, (float) x * brightness, 0.0f);
+			else if(hNew >= 1 && hNew < 2) baseColor = new Color((float) x * brightness, brightness, 0.0f);
+			else if(hNew >= 2 && hNew < 3) baseColor = new Color(0.0f, brightness, (float) x * brightness);
+			else if(hNew >= 3 && hNew < 4) baseColor = new Color(0.0f, (float) x * brightness, brightness);
+			else if(hNew >= 4 && hNew < 5) baseColor = new Color((float) x * brightness, 0.0f, brightness);
+			else if(hNew >= 5 && hNew < 6) baseColor = new Color(brightness, 0.0f, (float) x * brightness);
+			g.setColor(baseColor);
+
+			for(int col = 0; col < SIZE_X; col++)
+			{
+				for(int row = 0; row < SIZE_Y; row++)
+				{
+					if(!field[col][row].isOutsideRange())
+					{
+						field[col][row].square();
+						if(IS_MANDELBROT) field[col][row].add(baseField[col][row]);
+						else field[col][row].add(c);
+
+						if(field[col][row].magnitude() > 20000)
+						{
+							g.drawLine(col, row, col, row);
+							field[col][row].outsideRange();
+						}
+					}
+				}
+			}
+		}
+
+		try
+		{
+			ImageIO.write(hugeImage, "PNG", new File("image.png"));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		System.out.println("made");
+	}
+	
 	public void mousePressed(MouseEvent e)
 	{
 		double x = e.getX();
