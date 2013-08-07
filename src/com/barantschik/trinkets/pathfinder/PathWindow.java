@@ -12,53 +12,28 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-public class PathWindow extends JFrame implements ActionListener
+import com.barantschik.trinkets.Container;
+
+public class PathWindow extends Container implements ActionListener
 {
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
-	private JMenuBar menuBar;
-	private JMenu fileMenu, editMenu, analysisMenu, helpMenu;
-	private JMenuItem newWindow, save, saveAsImage, load, preferences;
 	private PathFinder pf = new PathFinder();
 	private JFileChooser fc;
 	private PreferencesChooser pc;
 	
 	public PathWindow()
 	{
-		
-		setSize(SIZE_X, SIZE_Y);
-		setLocationRelativeTo(null);
 		setTitle("A* Algorithm");
 		
+		addMenu("File", new String[]{"New Window", "Save File", "Save as Image", "Load File"});
+		addMenu("Edit", new String[]{});
+		addMenu("Analysis", new String[]{});
+		addMenu("Help", new String[]{"Preferences"});
+		
 		getContentPane().add(pf);
-		menuBar = new JMenuBar();
-		fileMenu = new JMenu("File");
-		editMenu = new JMenu("Edit");
-		analysisMenu = new JMenu("Analysis");
-		helpMenu = new JMenu("Help");
-		newWindow = new JMenuItem("New Window");
-		
-		save = new JMenuItem("Save File");
-		saveAsImage = new JMenuItem("Save as Image");
-		load = new JMenuItem("Load File");
-		newWindow.addActionListener(this);
-		save.addActionListener(this);
-		saveAsImage.addActionListener(this);
-		load.addActionListener(this);
-		fileMenu.add(newWindow);
-		fileMenu.add(save);
-		fileMenu.add(saveAsImage);
-		fileMenu.add(load);
-		
-		preferences = new JMenuItem("Preferences");
-		preferences.addActionListener(this);
-		helpMenu.add(preferences);
-		
-		menuBar.add(fileMenu);
-		menuBar.add(editMenu);
-		menuBar.add(analysisMenu);
-		menuBar.add(helpMenu);
-		setJMenuBar(menuBar);
 		pack();
+		
+		setLocationRelativeTo(null);
 		
 		setVisible(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -122,7 +97,6 @@ public class PathWindow extends JFrame implements ActionListener
 		else if(e.getActionCommand().equals("Preferences"))
 		{
 			pc = new PreferencesChooser();
-			
 		}
 	}
 }

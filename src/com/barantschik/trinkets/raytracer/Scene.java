@@ -20,7 +20,7 @@ public class Scene
 		}
 		else
 		{
-			c = new Camera(new double[]{-3, 2.2, 1.9}, new double[]{0, 0, 10}, new double[]{0, 1, 0});
+			c = new Camera(new double[]{-2.8, 2.2, 3.9}, new double[]{0, 0, 10}, new double[]{0, 1, 0});
 
 			lights = new Light[1];
 			renderable = new Renderable[7];

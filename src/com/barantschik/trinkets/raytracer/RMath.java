@@ -7,7 +7,7 @@ import java.awt.Image;
 public abstract class RMath
 {
 	private static final double FLOAT_ADJUST = 0.001;
-	private static final int NUM_RECURSIVE = 1;
+	private static final int NUM_RECURSIVE = 10;
 	
 	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
 	{
@@ -53,20 +53,29 @@ public abstract class RMath
 		{
 			for(int j = 0; j < height; j++)
 			{
-				float averageR = 0, averageG = 0, averageB = 0;
-				Ray[] rays = s.getSP().getAAProvider().generateRays(i, j, s.getC(), s.getSP());
-				float[][] colors = new float[rays.length][3];
-				for(int rNum = 0; rNum < rays.length; rNum++)
+				boolean done = false;
+				while(!done)
 				{
-					Ray r = rays[rNum];
-
-					float[] curColor = getRecursiveColorValue(1, s, r);
-
-					colors[rNum] = curColor;
+					Ray[] rays = s.getSP().getAAProvider().generateRays(i, j, s.getC(), s.getSP());
+					float[][] colors = new float[rays.length][3];
+					for(int rNum = 0; rNum < rays.length; rNum++)
+					{
+						Ray r = rays[rNum];
+						
+						float[] curColor = getRecursiveColorValue(1, s, r);
+						
+						colors[rNum] = curColor;
+					}
+					
+					AAData curData = s.getSP().getAAProvider().createPixelData(colors);
+					if(curData.done)
+					{						
+						float[] pixelcolor = curData.color;
+						g.setColor(new Color(pixelcolor[0], pixelcolor[1], pixelcolor[2]));
+						g.fillRect(i, j, 1, 1);
+						done = true;
+					}
 				}
-				float[] pixelcolor = s.getSP().getAAProvider().createPixelData(colors).color;
-				g.setColor(new Color(pixelcolor[0], pixelcolor[1], pixelcolor[2]));
-				g.fillRect(i, j, 1, 1);
 			}
 		}
 		return image;

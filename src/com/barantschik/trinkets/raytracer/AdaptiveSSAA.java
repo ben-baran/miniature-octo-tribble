@@ -2,7 +2,7 @@ package com.barantschik.trinkets.raytracer;
 
 public class AdaptiveSSAA extends UniformSampler implements AAProvider
 {
-	public static final double DEFAULT_EPSILON = 0.1;
+	public static final double DEFAULT_EPSILON = 0.2485;
 	
 	private int curNumIterations = 1;
 	private int squareIterations = 1;
@@ -26,7 +26,15 @@ public class AdaptiveSSAA extends UniformSampler implements AAProvider
 
 	public AAData createPixelData(float[][] colors)
 	{
-		double averageStandardDeviation = 0;//GMath.average(GMath.standardDeviation(colors[0]), GMath.standardDeviation(colors[1]), GMath.standardDeviation(colors[2]));
+		float[] r = new float[colors.length], g = new float[colors.length], b = new float[colors.length];
+		for(int i = 0; i < colors.length; i++)
+		{
+			r[i] = colors[i][0];
+			g[i] = colors[i][1];
+			b[i] = colors[i][2];
+		}
+		
+		double averageStandardDeviation = GMath.average(GMath.standardDeviation(r), GMath.standardDeviation(g), GMath.standardDeviation(b));
 		if(averageStandardDeviation < epsilon)
 		{
 			float averageR = 0, averageG = 0, averageB = 0;
@@ -48,11 +56,11 @@ public class AdaptiveSSAA extends UniformSampler implements AAProvider
 			
 			return new AAData(true, new float[]{averageR, averageG, averageB});
 		}
-		
+		System.out.println(averageStandardDeviation + ": " + (curNumIterations + 1));
 		curNumIterations++;
 		squareIterations = curNumIterations * curNumIterations;
 		
-		numAAInverse = 1.0 / (numAA * squareIterations);
+		numAAInverse = 1.0 / (numAA * curNumIterations);
 		numAAMap = numAA * numAA * squareIterations;
 		
 		return new AAData(false, null);

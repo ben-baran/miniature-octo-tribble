@@ -2,6 +2,8 @@ package com.barantschik.trinkets.raytracer;
 
 public class UniformSampler implements Sampler
 {
+	public final static double EPSILON_1 = 0.99;
+	
 	protected int numAA;
 	protected double numAAInverse;
 	protected int numAAMap;
@@ -27,9 +29,9 @@ public class UniformSampler implements Sampler
 	{
 		Ray[] rays = new Ray[numAAMap];
 		int i = 0;
-		for(double addX = 0; addX < 1; addX += numAAInverse)
+		for(double addX = 0; addX < EPSILON_1; addX += numAAInverse)
 		{
-			for(double addY = 0; addY < 1; addY += numAAInverse)
+			for(double addY = 0; addY < EPSILON_1; addY += numAAInverse)
 			{
 				rays[i] = c.makeRay(x + addX, y + addY, sp.getSizeX(), sp.getSizeY());
 				i++;

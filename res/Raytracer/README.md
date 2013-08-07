@@ -1,0 +1,1 @@
+Use WASD to move orthogonally to x-z plane. Up and down arrow keys move up and down. Escape exits. All other keys retrace.

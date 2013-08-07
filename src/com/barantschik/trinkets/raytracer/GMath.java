@@ -406,4 +406,42 @@ public abstract class GMath
 		
 		return sum / values.length;
 	}
+	
+	public static float average(float... values)
+	{		
+		float sum = 0;
+		for(float f : values) sum += f;
+		
+		return sum / values.length;
+	}
+
+	public static float standardDeviation(float... fs)
+	{
+		float average = average(fs);
+		float sumSquareDifferences = 0;
+		
+		for(int i = 0; i < fs.length; i++)
+		{
+			float difference = fs[i] - average;
+			sumSquareDifferences += difference * difference;
+		}
+		
+		sumSquareDifferences /= fs.length;
+		return (float) Math.sqrt(sumSquareDifferences);
+	}
+	
+	public static double standardDeviation(double... fs)
+	{
+		double average = average(fs);
+		double sumSquareDifferences = 0;
+		
+		for(int i = 0; i < fs.length; i++)
+		{
+			double difference = fs[i] - average;
+			sumSquareDifferences += difference * difference;
+		}
+		
+		sumSquareDifferences /= fs.length;
+		return Math.sqrt(sumSquareDifferences);
+	}
 }   
