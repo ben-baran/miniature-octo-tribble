@@ -145,7 +145,7 @@ public abstract class RMath
 			}
 			else
 			{
-				return new float[]{0, 0, 0};
+				return s.getBackColor(r);
 			}
 		}
 	}

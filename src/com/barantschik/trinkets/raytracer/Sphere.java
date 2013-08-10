@@ -2,10 +2,10 @@ package com.barantschik.trinkets.raytracer;
 
 public class Sphere implements Renderable
 {
-	private static final double DEFAULT_SHININESS = 50;
+	private static final double DEFAULT_SHININESS = 200;
 	private double shininess;
 	
-	private static final float DEFAULT_REFLECTIVITY = 1;
+	private static final float DEFAULT_REFLECTIVITY = 0.5f;
 	private float reflectivity;
 	
 	double[] pos;

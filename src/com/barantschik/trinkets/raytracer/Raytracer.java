@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 
 public class Raytracer extends JFrame implements KeyListener
 {
-	private final int PIXEL_X = 1000, PIXEL_Y = 1000;
+	private final int PIXEL_X = 100, PIXEL_Y = 100;
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	
 	private boolean start = false;

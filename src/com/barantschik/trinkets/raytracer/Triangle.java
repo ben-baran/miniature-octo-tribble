@@ -7,7 +7,7 @@ public class Triangle implements Renderable
 	private static final double DEFAULT_SHININESS = 50;
 	private double shininess;
 	
-	private static final float DEFAULT_REFLECTIVITY = 1;
+	private static final float DEFAULT_REFLECTIVITY = 0;
 	private float reflectivity;
 	
 	double[] v1, v2, v3;
@@ -25,6 +25,8 @@ public class Triangle implements Renderable
 	private M4x4 transformMatrix = M4x4.identity();
 	private M4x4 inverseTransformMatrix = M4x4.identity();
 	private M4x4 inverseTransposedTransformMatrix = M4x4.identity();
+	
+	protected double s1, s2, s3;
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] color)
 	{
@@ -88,6 +90,9 @@ public class Triangle implements Renderable
 					
 					if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
 					{
+						s1 = solution[0];
+						s2 = solution[1];
+						s3 = 1 - s1 - s2;
 						return t;
 					}
 				}
