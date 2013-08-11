@@ -2,11 +2,11 @@ package com.barantschik.trinkets.raytracer;
 
 public interface Renderable
 {
-	public double giveIntersection(Ray r);
+	public IntersectionData giveIntersection(Ray r);
 	public double[] getNormal(double[] point);
 	public double getShininess();
 	public float getReflectivity();
-	public float[] getDiffuse();
+	public float[] getDiffuse(IntersectionData interData);
 	public float[] getSpecular();
 	public float[] getAmbient();
 	public float[] getEmissive();

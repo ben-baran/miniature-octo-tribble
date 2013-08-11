@@ -38,7 +38,7 @@ public class PointLight implements Light
 		double distance = GMath.getMag(difference);
 		Ray original = new Ray(point, difference);
 		Ray r = new Ray(GMath.add(point, GMath.mult(original.dir, floatAdjust)), original.dir);
-		double solution = renderable.giveIntersection(r);
+		double solution = renderable.giveIntersection(r).t;
 		if(!Double.isNaN(solution) && solution > 0 && solution < distance)
 		{
 			return true;

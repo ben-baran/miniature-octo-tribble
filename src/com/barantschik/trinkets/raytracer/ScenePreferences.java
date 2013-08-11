@@ -4,17 +4,17 @@ public class ScenePreferences
 {
 	private int sizeX, sizeY;
 	
-	private AAProvider aaProvider;
+	private Sampler aaProvider;
 	
 	private float ambient;
 	private double[] defaultAttenuation;
 	
 	public ScenePreferences(int sizeX, int sizeY)
 	{
-		this(sizeX, sizeY, new NoAA());
+		this(sizeX, sizeY, new CenterSampler());
 	}
 	
-	public ScenePreferences(int sizeX, int sizeY, AAProvider aaProvider)
+	public ScenePreferences(int sizeX, int sizeY, Sampler aaProvider)
 	{
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
@@ -41,7 +41,7 @@ public class ScenePreferences
 		this.sizeY = sizeY;
 	}
 	
-	public AAProvider getAAProvider()
+	public Sampler getAAProvider()
 	{
 		return aaProvider;
 	}

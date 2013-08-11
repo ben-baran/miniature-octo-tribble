@@ -2,11 +2,11 @@ package com.barantschik.trinkets.raytracer;
 
 public class UniformSampler implements Sampler
 {
-	public final static double EPSILON_1 = 0.99;
+	public final static double EPSILON_1 = 0.9999;
 	
-	protected int numAA;
-	protected double numAAInverse;
-	protected int numAAMap;
+	private int numAA;
+	private double numAAInverse;
+	private int numAAMap;
 	
 	public UniformSampler()
 	{
@@ -18,11 +18,6 @@ public class UniformSampler implements Sampler
 		this.numAA = numAA;
 		numAAInverse = 1.0 / this.numAA;
 		numAAMap = this.numAA * this.numAA;
-	}
-	
-	public int getNumAAMap()
-	{
-		return numAAMap;
 	}
 	
 	public Ray[] generateRays(double x, double y, Camera c, ScenePreferences sp)

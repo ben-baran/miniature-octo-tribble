@@ -1,32 +1,31 @@
 package com.barantschik.trinkets.raytracer;
 
+import java.awt.Color;
 import java.util.Arrays;
 
 public class Triangle implements Renderable
 {
-	private static final double DEFAULT_SHININESS = 50;
-	private double shininess;
+	protected static final double DEFAULT_SHININESS = 50;
+	protected double shininess;
 	
-	private static final float DEFAULT_REFLECTIVITY = 0;
-	private float reflectivity;
+	protected static final float DEFAULT_REFLECTIVITY = 0;
+	protected float reflectivity;
 	
 	double[] v1, v2, v3;
 	double[] bMinA, cMinA;
 	
-	private float[] diffuse;
-	private float[] specular;
-	private float[] ambient;
-	private float[] emmissive;
+	protected float[] diffuse;
+	protected float[] specular;
+	protected float[] ambient;
+	protected float[] emmissive;
 	
-	private double[] normal;
-	private double[] transformedNormal;
+	protected double[] normal;
+	protected double[] transformedNormal;
 	
-	private boolean transformed = false;
-	private M4x4 transformMatrix = M4x4.identity();
-	private M4x4 inverseTransformMatrix = M4x4.identity();
-	private M4x4 inverseTransposedTransformMatrix = M4x4.identity();
-	
-	protected double s1, s2, s3;
+	protected boolean transformed = false;
+	protected M4x4 transformMatrix = M4x4.identity();
+	protected M4x4 inverseTransformMatrix = M4x4.identity();
+	protected M4x4 inverseTransposedTransformMatrix = M4x4.identity();
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] color)
 	{
@@ -75,7 +74,7 @@ public class Triangle implements Renderable
 		this.emmissive = emmissive;
 	}
 	
-	public double giveIntersection(Ray r)
+	public IntersectionData giveIntersection(Ray r)
 	{
 		if(!transformed)
 		{
@@ -90,14 +89,11 @@ public class Triangle implements Renderable
 					
 					if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
 					{
-						s1 = solution[0];
-						s2 = solution[1];
-						s3 = 1 - s1 - s2;
-						return t;
+						return new IntersectionData(t, this);
 					}
 				}
 			}
-			return Double.NaN;
+			return new IntersectionData(Double.NaN, null);
 		}
 		else
 		{
@@ -116,11 +112,11 @@ public class Triangle implements Renderable
 					
 					if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
 					{
-						return t;
+						return new IntersectionData(t, this);
 					}
 				}
 			}
-			return Double.NaN;
+			return new IntersectionData(Double.NaN, null);
 		}
 	}
 
@@ -158,7 +154,7 @@ public class Triangle implements Renderable
 		return reflectivity;
 	}
 	
-	public float[] getDiffuse()
+	public float[] getDiffuse(IntersectionData interData)
 	{
 		return diffuse;
 	}

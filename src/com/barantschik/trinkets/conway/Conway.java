@@ -13,6 +13,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Calendar;
 import java.util.Scanner;
 
 import javax.swing.JPanel;
@@ -33,6 +34,8 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	
 	private boolean wrap = false;
 	private boolean grid = false;
+	
+	private long totalTime = 0;
 	
 	private Timer time = new Timer(0, this);
 	
@@ -94,7 +97,14 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
+		Calendar c = Calendar.getInstance();
+		long t1 = c.getTimeInMillis();
+		
 		update();
+		
+		c = Calendar.getInstance();
+		totalTime += c.getTimeInMillis() - t1;
+		
 		repaint();
 	}
 	
@@ -252,7 +262,12 @@ public class Conway extends JPanel implements MouseListener, MouseMotionListener
 			update();
 			repaint();
 		}
+		else if(e.getKeyCode() == KeyEvent.VK_P)
+		{
+			System.out.println(1 / (((double) totalTime) / numGenerations / 1000));
+		}
 	}
+	
 	public void mouseClicked(MouseEvent e)
 	{
 		if(!running)

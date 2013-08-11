@@ -20,9 +20,58 @@ public class TexTriangle extends Triangle
 		this.image = image;
 	}
 	
-	public float[] getDiffuse()
+	public IntersectionData giveIntersection(Ray r)
 	{
-		double[] pos = GMath.add(GMath.mult(uv1, s1), GMath.mult(uv2, s2), GMath.mult(uv3, s3));
-		return new Color(image.getRGB((int) (pos[0] * image.getWidth()), (int) (pos[1] * image.getHeight())), false).getRGBColorComponents(null);
+		if(!transformed)
+		{
+			double dirDotN = GMath.dot(r.dir, normal);
+			if(dirDotN != 0)
+			{
+				double t = GMath.dot(normal, GMath.subtract(r.pos, v1)) / dirDotN;
+				if(t > 0)
+				{
+					M3x3 inverseMatrix = GMath.findInverseMatrix(GMath.constructMatrix(bMinA, cMinA, GMath.negative(r.dir)));
+					double[] solution = GMath.mult(inverseMatrix, GMath.subtract(v1, r.pos));
+					
+					if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
+					{
+						double[] texPos = GMath.add(GMath.mult(uv1, 1 - solution[0] - solution[1]), GMath.mult(uv2, solution[0]), GMath.mult(uv3, solution[1]));
+						
+						return new IntersectionData(t, this, (int) (texPos[0] * image.getWidth()), (int) (texPos[1] * image.getHeight()));
+					}
+				}
+			}
+			return new IntersectionData(Double.NaN, null);
+		}
+		else
+		{
+			double[] transformedPos = GMath.mult(inverseTransformMatrix, GMath.createHomogenousPos(r.pos));
+			double[] transformedDir = GMath.mult(inverseTransformMatrix, GMath.createHomogenousDir(r.dir));
+			Ray rT = new Ray(transformedPos, transformedDir);
+			
+			double dirDotN = GMath.dot(rT.dir, normal);
+			if(dirDotN != 0)
+			{
+				double t = GMath.dot(normal, GMath.subtract(rT.pos, v1)) / dirDotN;
+				if(t > 0)
+				{
+					M3x3 inverseMatrix = GMath.findInverseMatrix(GMath.constructMatrix(bMinA, cMinA, GMath.negative(rT.dir)));
+					double[] solution = GMath.mult(inverseMatrix, GMath.subtract(v1, rT.pos));
+					
+					if(solution[0] >= 0 && solution[1] >= 0 && solution[0] + solution[1] <= 1)
+					{
+						double[] texPos = GMath.add(GMath.mult(uv1, 1 - solution[0] - solution[1]), GMath.mult(uv2, solution[0]), GMath.mult(uv3, solution[1]));
+						
+						return new IntersectionData(t, this, (int) (texPos[0] * image.getWidth()), (int) (texPos[1] * image.getHeight()));
+					}
+				}
+			}
+			return new IntersectionData(Double.NaN, null);
+		}
+	}
+	
+	public float[] getDiffuse(IntersectionData interData)
+	{
+		return new Color(image.getRGB(interData.u, interData.v), false).getRGBColorComponents(null);
 	}
 }

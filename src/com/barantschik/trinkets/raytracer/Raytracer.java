@@ -32,7 +32,7 @@ public class Raytracer extends JFrame implements KeyListener
 
 		addKeyListener(this);
 
-		SSAA aa = new SSAA(1);
+		CenterSampler aa = new CenterSampler();
 		s = new Scene(new ScenePreferences(PIXEL_X, PIXEL_Y, aa), true);
 	}
 

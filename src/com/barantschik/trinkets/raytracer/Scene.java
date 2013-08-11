@@ -55,7 +55,7 @@ public class Scene
 			
 			/**********************************************************************************/
 			
-			c = new Camera(new double[]{-2.8, 5.9, 2}, new double[]{0, 0, 4}, new double[]{0, 1, 0});
+			c = new Camera(new double[]{-2.9, -1.4, 5.9}, new double[]{0, 0, 4}, new double[]{0, 1, 0});
 
 			lights = new Light[2];
 			renderable = new Renderable[7];

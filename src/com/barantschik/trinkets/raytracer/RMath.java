@@ -11,19 +11,17 @@ public abstract class RMath
 	
 	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
 	{
-		double shortestPath = Double.POSITIVE_INFINITY;
-		Renderable curShortest = null;
+		IntersectionData shortest = new IntersectionData(Double.POSITIVE_INFINITY, null);
 
 		for(int i = 0; i < renderableList.length; i++)
 		{
-			double intersection = renderableList[i].giveIntersection(r);
-			if(!Double.isNaN(intersection) && intersection < shortestPath)
+			IntersectionData intersection = renderableList[i].giveIntersection(r);
+			if(!Double.isNaN(intersection.t) && intersection.t < shortest.t)
 			{
-				shortestPath = intersection;
-				curShortest = renderableList[i];
+				shortest = intersection;
 			}
 		}
-		return new IntersectionData(shortestPath, curShortest);
+		return shortest;
 	}
 
 	private static boolean inShadow(double[] p, Light light, Renderable[] renderableList)
@@ -53,29 +51,19 @@ public abstract class RMath
 		{
 			for(int j = 0; j < height; j++)
 			{
-				boolean done = false;
-				while(!done)
+				Ray[] rays = s.getSP().getAAProvider().generateRays(i, j, s.getC(), s.getSP());
+				float[][] colors = new float[rays.length][3];
+				for(int rNum = 0; rNum < rays.length; rNum++)
 				{
-					Ray[] rays = s.getSP().getAAProvider().generateRays(i, j, s.getC(), s.getSP());
-					float[][] colors = new float[rays.length][3];
-					for(int rNum = 0; rNum < rays.length; rNum++)
-					{
-						Ray r = rays[rNum];
-						
-						float[] curColor = getRecursiveColorValue(1, s, r);
-						
-						colors[rNum] = curColor;
-					}
-					
-					AAData curData = s.getSP().getAAProvider().createPixelData(colors);
-					if(curData.done)
-					{						
-						float[] pixelcolor = curData.color;
-						g.setColor(new Color(pixelcolor[0], pixelcolor[1], pixelcolor[2]));
-						g.fillRect(i, j, 1, 1);
-						done = true;
-					}
-				}
+					Ray r = rays[rNum];
+
+					float[] curColor = getRecursiveColorValue(1, s, r);
+
+					colors[rNum] = curColor;
+				}						
+				float[] pixelcolor = averageColors(colors);
+				g.setColor(new Color(pixelcolor[0], pixelcolor[1], pixelcolor[2]));
+				g.fillRect(i, j, 1, 1);
 			}
 		}
 		return image;
@@ -105,9 +93,9 @@ public abstract class RMath
 			{
 				double[] directionalVector = lights[lightNum].directionalVector(point);
 				
-				float[] diffuse = GMath.mult(interData.renderable.getDiffuse(), (float) Math.max(GMath.dot(normal, GMath.normalize(directionalVector)), 0));
+				float[] diffuse = GMath.mult(interData.renderable.getDiffuse(interData), (float) Math.max(GMath.dot(normal, GMath.normalize(directionalVector)), 0));
 				float specDot = (float)  Math.max(GMath.dot(normal, GMath.getHalfAngle(viewVector, directionalVector, normal)), 0);
-				float[] specular = GMath.mult(interData.renderable.getDiffuse(), (float) Math.pow(specDot, interData.renderable.getShininess()));
+				float[] specular = GMath.mult(interData.renderable.getSpecular(), (float) Math.pow(specDot, interData.renderable.getShininess()));
 
 				
 				float[] lightIntensity = lights[lightNum].getIntensity(point);
@@ -148,5 +136,19 @@ public abstract class RMath
 				return s.getBackColor(r);
 			}
 		}
+	}
+
+	public static float[] averageColors(float[][] colors)
+	{
+		float r = 0, g = 0, b = 0;
+		
+		for(int i = 0; i < colors.length; i++)
+		{
+			r += colors[i][0];
+			g += colors[i][1];
+			b += colors[i][2];
+		}
+		float numDiv = 1.0f / colors.length;
+		return GMath.mult(new float[]{r, g, b}, numDiv);
 	}
 }

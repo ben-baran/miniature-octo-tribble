@@ -5,7 +5,7 @@ public class Sphere implements Renderable
 	private static final double DEFAULT_SHININESS = 200;
 	private double shininess;
 	
-	private static final float DEFAULT_REFLECTIVITY = 0.5f;
+	private static final float DEFAULT_REFLECTIVITY = 1;
 	private float reflectivity;
 	
 	double[] pos;
@@ -56,7 +56,7 @@ public class Sphere implements Renderable
 		this.emmissive = emmissive;
 	}
 	
-	public double giveIntersection(Ray r)
+	public IntersectionData giveIntersection(Ray r)
 	{
 		if(!transformed)
 		{
@@ -69,15 +69,15 @@ public class Sphere implements Renderable
 			double[] solution = GMath.solveQuad(a, b, c);
 			if(Double.isNaN(solution[0]) || (solution[0] < 0 && solution[1] < 0))
 			{
-				return Double.NaN;
+				return new IntersectionData(Double.NaN, null);
 			}
 			else if(solution[0] < 0 || solution[1] < 0)
 			{
-				return Math.max(solution[0],  solution[1]);
+				return new IntersectionData(Math.max(solution[0],  solution[1]), this);
 			}
 			else
 			{
-				return Math.min(solution[0],  solution[1]);
+				return new IntersectionData(Math.min(solution[0], solution[1]), this);
 			}
 		}
 		else
@@ -97,7 +97,7 @@ public class Sphere implements Renderable
 			
 			if(Double.isNaN(solution[0]) || (solution[0] < 0 && solution[1] < 0))
 			{
-				return Double.NaN;
+				return new IntersectionData(Double.NaN, null);
 			}
 			else if(solution[0] < 0 || solution[1] < 0)
 			{
@@ -108,7 +108,7 @@ public class Sphere implements Renderable
 				finalAnswer = Math.min(solution[0],  solution[1]);
 			}
 			
-			return finalAnswer;
+			return new IntersectionData(finalAnswer, this);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class Sphere implements Renderable
 		return reflectivity;
 	}
 	
-	public float[] getDiffuse()
+	public float[] getDiffuse(IntersectionData interData)
 	{
 		return diffuse;
 	}
