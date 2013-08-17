@@ -72,6 +72,10 @@ public class TexTriangle extends Triangle
 	
 	public float[] getDiffuse(IntersectionData interData)
 	{
+		if(image.getWidth() <= interData.u) interData.u = image.getWidth() - 1;
+		else if(interData.u < 0) interData.u = 0;
+		if(image.getHeight() <= interData.v) interData.v = image.getHeight() - 1;
+		else if(interData.v < 0) interData.v = 0;
 		return new Color(image.getRGB(interData.u, interData.v), false).getRGBColorComponents(null);
 	}
 }

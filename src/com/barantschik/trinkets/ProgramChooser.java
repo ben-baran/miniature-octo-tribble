@@ -67,7 +67,7 @@ public class ProgramChooser extends JFrame implements ActionListener
 		}
 		else if(e.getActionCommand().equals("Open Raytracer"))
 		{
-			new com.barantschik.trinkets.raytracer.Raytracer();
+			new com.barantschik.trinkets.raytracer.RaytracerWindow();
 		}
 	}
 }

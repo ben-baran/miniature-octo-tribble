@@ -32,11 +32,11 @@ public class Fractal extends JPanel implements MouseListener, KeyListener, Actio
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
 	private final Color PRISONER_COLOR = Color.BLACK;
 	private final Color ORIGINAL_BASE_COLOR = Color.BLUE;
-	private final boolean IS_MANDELBROT = true;
+	private final boolean IS_MANDELBROT = false;
 
 	private double cReal = 0, cImaginary = 0;
 	private double centerX = 0, centerY = 0;
-	private double rangeX = 4, rangeY = 4;
+	private double rangeX = 2, rangeY = 2;
 	private int numIterAdded = 0;
 	private int hue = 360; //HSV color system
 	private Color baseColor = ORIGINAL_BASE_COLOR;
@@ -51,8 +51,8 @@ public class Fractal extends JPanel implements MouseListener, KeyListener, Actio
 
 	public Fractal()
 	{
-		cReal = 0;
-		cImaginary = 0;
+		cReal = -0.297491;
+		cImaginary = 0.641051;
 
 		setSize(SIZE_X, SIZE_Y);
 		setPreferredSize(new Dimension(SIZE_X, SIZE_Y));

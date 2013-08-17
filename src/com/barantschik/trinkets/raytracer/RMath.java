@@ -3,12 +3,10 @@ package com.barantschik.trinkets.raytracer;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.Calendar;
 
 public abstract class RMath
-{
-	private static final double FLOAT_ADJUST = 0.001;
-	private static final int NUM_RECURSIVE = 10;
-	
+{	
 	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
 	{
 		IntersectionData shortest = new IntersectionData(Double.POSITIVE_INFINITY, null);
@@ -24,11 +22,11 @@ public abstract class RMath
 		return shortest;
 	}
 
-	private static boolean inShadow(double[] p, Light light, Renderable[] renderableList)
+	private static boolean inShadow(double[] p, Light light, Renderable[] renderableList, ScenePreferences sp)
 	{
 		for(Renderable renderable : renderableList)
 		{
-			if(light.blocked(p, renderable, FLOAT_ADJUST))
+			if(light.blocked(p, renderable, sp.getFloatAdjust()))
 			{
 				return true;
 			}
@@ -38,9 +36,6 @@ public abstract class RMath
 
 	public static Image drawScene(Scene s, Image image)
 	{
-		Light[] lights = s.getLights();
-		Renderable[] renderable = s.getRenderable();
-
 		int width = image.getWidth(null), height = image.getHeight(null);
 		Graphics g = image.getGraphics();
 
@@ -49,8 +44,10 @@ public abstract class RMath
 
 		for(int i = 0; i < width; i++)
 		{
+//			long t1 = Calendar.getInstance().getTimeInMillis();
+			
 			for(int j = 0; j < height; j++)
-			{
+			{	
 				Ray[] rays = s.getSP().getAAProvider().generateRays(i, j, s.getC(), s.getSP());
 				float[][] colors = new float[rays.length][3];
 				for(int rNum = 0; rNum < rays.length; rNum++)
@@ -65,6 +62,8 @@ public abstract class RMath
 				g.setColor(new Color(pixelcolor[0], pixelcolor[1], pixelcolor[2]));
 				g.fillRect(i, j, 1, 1);
 			}
+			
+//			System.out.println("Estimated time: " + (width * (Calendar.getInstance().getTimeInMillis() - t1) / 1000.0));
 		}
 		return image;
 	}
@@ -89,7 +88,7 @@ public abstract class RMath
 
 		for(int lightNum = 0; lightNum < lights.length; lightNum++)
 		{
-			if(!inShadow(point, lights[lightNum], renderable))
+			if(!inShadow(point, lights[lightNum], renderable, s.getSP()))
 			{
 				double[] directionalVector = lights[lightNum].directionalVector(point);
 				
@@ -114,7 +113,7 @@ public abstract class RMath
 
 	public static float[] getRecursiveColorValue(int n, Scene s, Ray r)
 	{
-		if(n == NUM_RECURSIVE)
+		if(n == s.getSP().getNumRecursive())
 		{
 			return getColorValue(findIntersection(r, s.getRenderable()), r, s);
 		}
@@ -127,7 +126,7 @@ public abstract class RMath
 				double[] interPoint = r.makeVector(interData.t);
 				double[] difference = GMath.subtract(r.pos, interPoint);
 				Ray original = new Ray(interPoint, GMath.reflectRay(difference, interData.renderable.getNormal(interPoint)));
-				Ray reflected = new Ray(GMath.add(interPoint, GMath.mult(original.dir, FLOAT_ADJUST)), original.dir);
+				Ray reflected = new Ray(GMath.add(interPoint, GMath.mult(original.dir, s.getSP().getFloatAdjust())), original.dir);
 				
 				return GMath.capColor(GMath.add(getColorValue(interData, r, s), GMath.mult(getRecursiveColorValue(n + 1, s, reflected), interData.renderable.getReflectivity())));
 			}

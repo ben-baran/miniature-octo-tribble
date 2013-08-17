@@ -1,6 +1,7 @@
 package com.barantschik.trinkets.raytracer;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -10,9 +11,9 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-public class Raytracer extends JFrame implements KeyListener
+public class Raytracer extends JPanel implements KeyListener
 {
 	private final int PIXEL_X = 100, PIXEL_Y = 100;
 	private final int SIZE_X = 1000, SIZE_Y = 1000;
@@ -24,11 +25,8 @@ public class Raytracer extends JFrame implements KeyListener
 	
 	public Raytracer()
 	{
-		setSize(SIZE_X, SIZE_Y);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		setUndecorated(true);
-		setVisible(true);
+		setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
+		setFocusable(true);
 
 		addKeyListener(this);
 
@@ -36,7 +34,7 @@ public class Raytracer extends JFrame implements KeyListener
 		s = new Scene(new ScenePreferences(PIXEL_X, PIXEL_Y, aa), true);
 	}
 
-	public void paint(Graphics g)
+	public void paintComponent(Graphics g)
 	{
 		bufferPaint(g);
 	}
@@ -59,11 +57,7 @@ public class Raytracer extends JFrame implements KeyListener
 	
 	public void keyPressed(KeyEvent e)
 	{
-		if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-		{
-			System.exit(0);
-		}
-		else if(e.getKeyCode() == KeyEvent.VK_W)
+		if(e.getKeyCode() == KeyEvent.VK_W)
 		{
 			s.getC().move(new double[]{0, 0, 0.1});
 			start = true;

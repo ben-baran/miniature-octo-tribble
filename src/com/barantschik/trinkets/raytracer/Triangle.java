@@ -5,6 +5,8 @@ import java.util.Arrays;
 
 public class Triangle implements Renderable
 {
+	public static final boolean COMMIT_AFTER_TRANSFORM = true;
+	
 	protected static final double DEFAULT_SHININESS = 50;
 	protected double shininess;
 	
@@ -142,8 +144,25 @@ public class Triangle implements Renderable
 		inverseTransposedTransformMatrix = GMath.findTranspose(inverseTransformMatrix);
 		
 		transformedNormal = GMath.mult(inverseTransposedTransformMatrix, GMath.createHomogenousDir(normal));
+		
+		if(COMMIT_AFTER_TRANSFORM) commitTransform();
 	}
-
+	
+	public void commitTransform()
+	{
+		v1 = GMath.mult(transformMatrix, v1);
+		v2 = GMath.mult(transformMatrix, v2);
+		v3 = GMath.mult(transformMatrix, v3);
+		
+		transformedNormal = normal;
+		
+		transformMatrix = M4x4.identity();
+		inverseTransformMatrix = M4x4.identity();
+		inverseTransposedTransformMatrix = M4x4.identity();
+		
+		transformed = false;
+	}
+	
 	public double getShininess()
 	{
 		return shininess;
