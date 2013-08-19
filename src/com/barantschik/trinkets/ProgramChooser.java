@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UIManager.*;
 
 public class ProgramChooser extends JFrame implements ActionListener
 {
@@ -20,6 +22,23 @@ public class ProgramChooser extends JFrame implements ActionListener
 	
 	public ProgramChooser()
 	{
+		//Makes UI Nimbus
+		try
+		{
+		    for(LookAndFeelInfo info : UIManager.getInstalledLookAndFeels())
+		    {
+		        if(info.getName().equals("Nimbus"))
+		        {
+		            UIManager.setLookAndFeel(info.getClassName());
+		            break;
+		        }
+		    }
+		}
+		catch (Exception e)
+		{
+		    e.printStackTrace();
+		}
+		
 //		setSize(SIZE_X, SIZE_Y);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		

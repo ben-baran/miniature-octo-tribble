@@ -1,14 +1,36 @@
 package com.barantschik.trinkets.raytracer.rendering;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Calendar;
 
+import javax.swing.SwingUtilities;
+
 
 public abstract class RMath
-{	
+{
+	public static class SendProgressMessage implements Runnable
+	{
+		private Raytracer r;
+		private int numColumns;
+		
+		public SendProgressMessage(Raytracer r, int numColumns)
+		{
+			this.r = r;
+			this.numColumns = numColumns;
+		}
+		
+		public void run()
+		{
+			r.updateRenderStatus(numColumns);
+		}
+	}
+	
+	public static final int AMOUNT_UPDATE_TIME = 17;
+	
 	public static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
 	{
 		IntersectionData shortest = new IntersectionData(Double.POSITIVE_INFINITY, null);
@@ -42,7 +64,7 @@ public abstract class RMath
 		return attenuation;
 	}
 
-	public static BufferedImage drawScene(Scene s, BufferedImage image)
+	public static BufferedImage drawScene(Raytracer raytracer, Scene s, BufferedImage image)
 	{
 		int width = image.getWidth(null), height = image.getHeight(null);
 		Graphics g = image.getGraphics();
@@ -52,7 +74,7 @@ public abstract class RMath
 
 		for(int i = 0; i < width; i++)
 		{
-//			long t1 = Calendar.getInstance().getTimeInMillis();
+			if(i % AMOUNT_UPDATE_TIME == 0) EventQueue.invokeLater(new SendProgressMessage(raytracer, i));
 			
 			for(int j = 0; j < height; j++)
 			{	
@@ -70,8 +92,6 @@ public abstract class RMath
 				g.setColor(new Color(pixelcolor[0], pixelcolor[1], pixelcolor[2]));
 				g.fillRect(i, j, 1, 1);
 			}
-			
-//			System.out.println("Estimated time: " + (width * (Calendar.getInstance().getTimeInMillis() - t1) / 1000.0));
 		}
 		return image;
 	}
