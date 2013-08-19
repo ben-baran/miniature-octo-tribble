@@ -1,8 +1,9 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
 
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+
 
 public class TexTriangle extends Triangle
 {
@@ -11,7 +12,7 @@ public class TexTriangle extends Triangle
 	
 	public TexTriangle(double[] v1, double[] v2, double[] v3, double[] uv1, double[] uv2, double[] uv3, BufferedImage image)
 	{
-		super(v1, v2, v3, new float[]{0, 0, 0});
+		super(v1, v2, v3, GMath.empty());
 		
 		this.uv1 = uv1;
 		this.uv2 = uv2;

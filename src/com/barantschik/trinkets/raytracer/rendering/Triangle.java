@@ -1,7 +1,7 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
 
-import java.awt.Color;
 import java.util.Arrays;
+
 
 public class Triangle implements Renderable
 {
@@ -10,8 +10,14 @@ public class Triangle implements Renderable
 	protected static final double DEFAULT_SHININESS = 50;
 	protected double shininess;
 	
-	protected static final float DEFAULT_REFLECTIVITY = 0;
+	protected static final float DEFAULT_REFLECTIVITY = 0.2f;
 	protected float reflectivity;
+	
+	private static final float DEFAULT_TRANSMISSION = 0;
+	private float transmission;
+	
+	private static final float DEFAULT_INDEX_OF_REFRACTION = 1;
+	private float indexOfRefraction;
 	
 	double[] v1, v2, v3;
 	double[] bMinA, cMinA;
@@ -41,12 +47,12 @@ public class Triangle implements Renderable
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess)
 	{
-		this(v1, v2, v3, diffuse, specular, shininess, new float[]{0, 0, 0});
+		this(v1, v2, v3, diffuse, specular, shininess, GMath.empty());
 	}
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient)
 	{
-		this(v1, v2, v3, diffuse, specular, shininess, ambient, new float[]{0, 0, 0});
+		this(v1, v2, v3, diffuse, specular, shininess, ambient, GMath.empty());
 	}
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive)
@@ -55,6 +61,16 @@ public class Triangle implements Renderable
 	}
 	
 	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive, float reflectivity)
+	{
+		this(v1, v2, v3, diffuse, specular, shininess, ambient, emmissive, DEFAULT_REFLECTIVITY, DEFAULT_TRANSMISSION);
+	}
+	
+	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive, float reflectivity, float transmission)
+	{
+		this(v1, v2, v3, diffuse, specular, shininess, ambient, emmissive, DEFAULT_REFLECTIVITY, DEFAULT_TRANSMISSION, DEFAULT_INDEX_OF_REFRACTION);
+	}
+	
+	public Triangle(double[] v1, double[] v2, double[] v3, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive, float reflectivity, float transmission, float indexOfRefraction)
 	{
 		this.v1 = v1;
 		this.v2 = v2;
@@ -71,9 +87,26 @@ public class Triangle implements Renderable
 		
 		this.shininess = shininess;
 		this.reflectivity = reflectivity;
+		this.transmission = transmission;
+		this.indexOfRefraction = indexOfRefraction;
 		
 		this.ambient = ambient;
 		this.emmissive = emmissive;
+	}
+	
+	public void setMaterial(Material m)
+	{
+		diffuse = m.diffuse;
+		specular = m.specular;
+		
+		shininess = m.shininess;
+		
+		reflectivity = m.reflectivity;
+		transmission = m.transmission;
+		indexOfRefraction = m.indexOfRefraction;
+		
+		ambient = m.ambient;
+		emmissive = m.emmissive;
 	}
 	
 	public IntersectionData giveIntersection(Ray r)
@@ -193,4 +226,13 @@ public class Triangle implements Renderable
 		return emmissive;
 	}
 
+	public float getTransmission()
+	{
+		return transmission;
+	}
+
+	public float getIndexOfRefraction()
+	{
+		return indexOfRefraction;
+	}
 }

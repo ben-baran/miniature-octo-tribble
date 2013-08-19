@@ -1,6 +1,7 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
 
 import java.util.Arrays;
+
 
 public abstract class GMath
 {
@@ -391,7 +392,9 @@ public abstract class GMath
 
 	public static double[] reflectRay(double[] d, double[] n)
 	{
-		return subtract(mult(mult(n, dot(d, n)), 2), d);
+		double[] solution = subtract(mult(mult(n, dot(d, n)), 2), d);
+		if(solution != null) return solution;
+		return new double[]{0, 1, 0};
 	}
 
 	public static float[] capColor(float[] color)
@@ -443,5 +446,27 @@ public abstract class GMath
 		
 		sumSquareDifferences /= fs.length;
 		return Math.sqrt(sumSquareDifferences);
+	}
+
+	public static Ray refract(double[] point, double[] normal, Ray r, float indexOfRefraction)
+	{
+		float ratio = r.lastIndex / indexOfRefraction;
+		double cosI = GMath.dot(normal, r.dir);
+		double sinThetaTSquared = ratio * ratio * (1 - cosI * cosI);
+		double[] dir = GMath.add(GMath.mult(r.dir, ratio), GMath.mult(normal, ratio * cosI - Math.sqrt(1 - sinThetaTSquared)));
+		
+		Ray refracted = new Ray(point, dir);
+		refracted.lastIndex = indexOfRefraction;
+		return refracted;
+	}
+
+	public static float[] empty()
+	{
+		return new float[]{0, 0, 0};
+	}
+	
+	public static float[] full()
+	{
+		return new float[]{1, 1, 1};
 	}
 }   

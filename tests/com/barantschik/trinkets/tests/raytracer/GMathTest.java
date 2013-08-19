@@ -6,8 +6,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.barantschik.trinkets.raytracer.GMath;
-import com.barantschik.trinkets.raytracer.M3x3;
+import com.barantschik.trinkets.raytracer.rendering.GMath;
+import com.barantschik.trinkets.raytracer.rendering.M3x3;
 
 public class GMathTest
 {

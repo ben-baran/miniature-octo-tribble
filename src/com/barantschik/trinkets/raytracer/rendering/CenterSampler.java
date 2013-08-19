@@ -1,4 +1,5 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
+
 
 public class CenterSampler implements Sampler
 {

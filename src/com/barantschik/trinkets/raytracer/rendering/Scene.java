@@ -1,4 +1,4 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -8,8 +8,11 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
+
 public class Scene
 {
+	private TexMesh background = null;
+	
 	private Camera c;
 	private Light[] lights = new Light[0];
 	private Renderable[] renderable = new Renderable[0];
@@ -18,6 +21,15 @@ public class Scene
 
 	public Scene(ScenePreferences sp, boolean chooseDefault) //Makes empty scene if not default scene
 	{
+		try
+		{
+			background = TexMesh.createFromFile(new File("./res/Raytracer/docs/cubemap/skybox.obj"), "obj", ImageIO.read(new File("./res/Raytracer/docs/cubemap/skybox.png")));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 		this.setSP(sp);
 
 		if(!chooseDefault)
@@ -26,6 +38,49 @@ public class Scene
 		}
 		else
 		{
+			c = new Camera(new double[]{0, 1, -4}, new double[]{0, 0, 0}, new double[]{0, 1, 0});
+			
+			lights = new Light[1];
+			renderable = new Renderable[3];
+			
+			lights[0] = new PointLight(new double[]{0, 1, -4}, new float[]{0.7f, 0.7f, 0.7f});
+			
+			renderable[0] = new Sphere(new double[]{-1.25, 0, 0}, 1);
+			renderable[1] = new Sphere(new double[]{1.25, 0, 0}, 1);
+			renderable[2] = new Sphere(new double[]{0, 0, 0}, 0.25);
+			renderable[0].setMaterial(MPreset.REFLECTIVE_BLUE.getMaterial());
+			renderable[1].setMaterial(MPreset.REFLECTIVE_RED.getMaterial());
+			renderable[2].setMaterial(MPreset.COMPLETE_REFLECTION.getMaterial());
+			
+			/**********************************************************************************/
+			
+//			c = new Camera(new double[]{4.5, 5.88, -6.1}, new double[]{0, 0, 0}, new double[]{0, 1, 0});
+//			lights = new Light[1];
+//			renderable = new Renderable[4];
+//			
+//			lights[0] = new PointLight(new double[]{0, 0, 0}, new float[]{0.7f, 0.7f, 0.7f});
+//			
+//			try
+//			{
+//				BufferedImage checker = ImageIO.read(new File("./res/Raytracer/images/checker_numbered.gif"));
+//				
+//				renderable[0] = new TexTriangle(new double[]{20, -2, 20}, new double[]{-20, -2, 20}, new double[]{-20, -2, -20}, 
+//												new double[]{0, 0}, new double[]{1, 0}, new double[]{1, 1}, checker);
+//				renderable[1] = new TexTriangle(new double[]{-20, -2, -20}, new double[]{20, -2, -20}, new double[]{20, -2, 20}, 
+//												new double[]{1, 1}, new double[]{0, 1}, new double[]{0, 0}, checker);
+//			}
+//			catch (IOException e)
+//			{
+//				e.printStackTrace();
+//			}
+//			
+//			renderable[2] = new Sphere(new double[]{-0.25, -1, 5}, 1);
+//			renderable[2].setMaterial(MPreset.REFLECTIVE_BLUE.getMaterial());
+//			renderable[3] = new Sphere(new double[]{0.25, -1, 2}, 1);
+//			renderable[3].setMaterial(MPreset.COMPLETE_REFRACTION.getMaterial());
+			
+			/**********************************************************************************/
+			
 //			c = new Camera(new double[]{0, 0, 0}, new double[]{0, 0, 1}, new double[]{0, 1, 0});
 //			lights = new Light[1];
 //			renderable = new Renderable[1];
@@ -36,36 +91,46 @@ public class Scene
 			
 			/**********************************************************************************/
 			
-			c = new Camera(new double[]{-1.8, 0.1, 6.2}, new double[]{0, 0, 7}, new double[]{0, 0, -1});
-			lights = new Light[2];
-			renderable = new Renderable[7];
-			
-			lights[0] = new PointLight(new double[]{1, 2, 5}, new float[]{0.7f, 0.7f, 0.7f});
-			lights[1] = new PointLight(new double[]{-1, 2, 5}, new float[]{0.7f, 0.7f, 0.7f});
-			
-			try
-			{
-				BufferedImage checker = ImageIO.read(new File("./res/Raytracer/images/checker.gif"));
-				
-				renderable[0] = new TexTriangle(new double[]{20, 20, 7}, new double[]{-20, 20, 7}, new double[]{-20, -20, 7}, 
-												new double[]{1, 1}, new double[]{0, 1}, new double[]{0, 0}, checker);
-				renderable[1] = new TexTriangle(new double[]{-20, -20, 7}, new double[]{20, -20, 7}, new double[]{20, 20, 7}, 
-												new double[]{1, 1}, new double[]{1, 0}, new double[]{0, 0}, checker);
-				
-				renderable[2] = new TexTriangle(new double[]{-20, -20, 4}, new double[]{-20, 20, 4}, new double[]{20, 20, 4}, 
-												new double[]{1, 1}, new double[]{0, 1}, new double[]{0, 0}, checker);
-				renderable[3] = new TexTriangle(new double[]{20, 20, 4}, new double[]{20, -20, 4}, new double[]{-20, -20, 4}, 
-												new double[]{1, 1}, new double[]{1, 0}, new double[]{0, 0}, checker);
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			
-			renderable[4] = new Sphere(new double[]{0, 0, 6}, 1, new float[]{0, 0, 0});
-			renderable[5] = new Sphere(new double[]{0.1, 1.2, 5.5}, 0.1, new float[]{0, 0, 0});
-			
-			renderable[6] = new Sphere(new double[]{-1, 1, 6.75}, 0.25, new float[]{0, 0, 0});
+//			c = new Camera(new double[]{-0.9, 1.5, 6.9}, new double[]{0, 0, 7}, new double[]{0, 0, -1});
+//			lights = new Light[2];
+//			renderable = new Renderable[12];
+//			
+//			lights[0] = new PointLight(new double[]{1, 2, 5}, new float[]{0.45f, 0.45f, 0.45f});
+//			lights[1] = new PointLight(new double[]{-1, 2, 5}, new float[]{0.45f, 0.45f, 0.45f});
+//			
+//			try
+//			{
+//				BufferedImage checker = ImageIO.read(new File("./res/Raytracer/images/checker.gif"));
+//				
+//				renderable[0] = new TexTriangle(new double[]{20, 20, 7}, new double[]{-20, 20, 7}, new double[]{-20, -20, 7}, 
+//												new double[]{1, 1}, new double[]{0, 1}, new double[]{0, 0}, checker);
+//				renderable[1] = new TexTriangle(new double[]{-20, -20, 7}, new double[]{20, -20, 7}, new double[]{20, 20, 7}, 
+//												new double[]{1, 1}, new double[]{1, 0}, new double[]{0, 0}, checker);
+//				
+//				renderable[2] = new TexTriangle(new double[]{-20, -20, 4}, new double[]{-20, 20, 4}, new double[]{20, 20, 4}, 
+//												new double[]{1, 1}, new double[]{0, 1}, new double[]{0, 0}, checker);
+//				renderable[3] = new TexTriangle(new double[]{20, 20, 4}, new double[]{20, -20, 4}, new double[]{-20, -20, 4}, 
+//												new double[]{1, 1}, new double[]{1, 0}, new double[]{0, 0}, checker);
+//			}
+//			catch (IOException e)
+//			{
+//				e.printStackTrace();
+//			}
+//			
+//			renderable[4] = new Sphere(new double[]{0, 0, 6}, 1, new float[]{0.8f, 0, 0});
+//			renderable[5] = new Sphere(new double[]{-1, 1, 6.75}, 0.25, new float[]{0.8f, 0.8f, 0});
+//			renderable[6] = new Sphere(new double[]{-0.75, 1, 6.9}, 0.1, new float[]{0, 0.8f, 0});
+//			renderable[7] = new Sphere(new double[]{-0.7, 1.1, 6.975}, 0.025, new float[]{0, 0.8f, 0.8f});
+//			renderable[8] = new Sphere(new double[]{-0.65, 1.125, 6.99}, 0.01, new float[]{0, 0, 0.8f});
+//			
+//			renderable[9] = new Sphere(new double[]{-0.7, 1.2, 6.95}, 0.05, new float[]{0, 0, 0.8f});
+//			renderable[9].setMaterial(MPreset.COMPLETE_REFRACTION.getMaterial());
+//			
+//			renderable[10] = new Sphere(new double[]{-0.7, 1.2, 6.875}, 0.025, new float[]{0, 0, 0.8f});
+//			renderable[10].setMaterial(MPreset.COMPLETE_REFRACTION.getMaterial());
+//			
+//			renderable[11] = new Sphere(new double[]{-0.7, 1.2, 6.84}, 0.01, new float[]{0, 0, 0.8f});
+//			renderable[11].setMaterial(MPreset.COMPLETE_REFRACTION.getMaterial());
 			
 			/**********************************************************************************/
 			
@@ -123,8 +188,7 @@ public class Scene
 
 	public float[] getBackColor(Ray r)
 	{
-//		return new float[]{(float) Math.min(Math.abs(r.dir[0]), 1) / 3, (float) Math.min(Math.abs(r.dir[1]), 1) / 3, (float) Math.min(Math.abs(r.dir[2]), 1) / 3};
-		return new float[]{0, 0, 0.01f};
+		return background.getDiffuse(RMath.findIntersection(r, background.triangles));
 	}
 	
 	public Camera getC()

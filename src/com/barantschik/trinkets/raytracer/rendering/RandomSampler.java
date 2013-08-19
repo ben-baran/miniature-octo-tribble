@@ -1,6 +1,7 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
 
 import java.util.Random;
+
 
 public class RandomSampler implements Sampler
 {

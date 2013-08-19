@@ -1,8 +1,9 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
+
 
 public class Camera
 {
-	public static double DEFAULT_FOV = 110;
+	public static double DEFAULT_FOV = 60;
 	
 	double fov;
 	double halfTan;

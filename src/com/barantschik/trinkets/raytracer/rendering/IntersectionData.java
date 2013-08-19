@@ -1,4 +1,5 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
+
 
 public class IntersectionData
 {
@@ -6,6 +7,7 @@ public class IntersectionData
 	Renderable renderable;
 	
 	int u, v;
+	int id;
 	
 	public IntersectionData(double t, Renderable renderable)
 	{
@@ -14,10 +16,16 @@ public class IntersectionData
 	
 	public IntersectionData(double t, Renderable renderable, int u, int v)
 	{
+		this(t, renderable, u, v, -1);
+	}
+	
+	public IntersectionData(double t, Renderable renderable, int u, int v, int id)
+	{
 		this.t = t;
 		this.renderable = renderable;
 		
 		this.u = u;
 		this.v = v;
+		this.id = id;
 	}
 }

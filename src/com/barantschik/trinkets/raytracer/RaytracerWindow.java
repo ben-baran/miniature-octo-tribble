@@ -7,6 +7,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import com.barantschik.trinkets.Container;
+import com.barantschik.trinkets.raytracer.rendering.Raytracer;
 
 public class RaytracerWindow extends Container
 {

@@ -1,12 +1,14 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
+
 
 public class ScenePreferences
 {
-	public final static float[] DEFAULT_AMBIENT = {0, 0, 0};
+	public final static float[] DEFAULT_AMBIENT = GMath.empty();
 	public final static double[] DEFAULT_DEFAULT_ATTENUATION = {1, 0, 0};
 	
 	public final static double DEFAULT_FLOAT_ADJUST = 0.000001;
 	public final static int DEFAULT_NUM_RECURSIVE = 5;
+	public final static double DEFAULT_RECURSIVE_THRESHOLD = 0.001;
 	
 	private int sizeX, sizeY;
 	
@@ -17,6 +19,7 @@ public class ScenePreferences
 	
 	private double floatAdjust;
 	private int numRecursive;
+	private double recursiveThreshold;
 	
 	public ScenePreferences(int sizeX, int sizeY)
 	{
@@ -34,6 +37,7 @@ public class ScenePreferences
 		
 		floatAdjust = DEFAULT_FLOAT_ADJUST;
 		numRecursive = DEFAULT_NUM_RECURSIVE;
+		recursiveThreshold = DEFAULT_RECURSIVE_THRESHOLD;
 	}
 	
 	public int getSizeX()
@@ -101,5 +105,15 @@ public class ScenePreferences
 	public void setNumRecursive(int numRecursive)
 	{
 		this.numRecursive = numRecursive;
+	}
+
+	public double getRecursiveThreshold()
+	{
+		return recursiveThreshold;
+	}
+
+	public void setRecursiveThreshold(double recursiveThreshold)
+	{
+		this.recursiveThreshold = recursiveThreshold;
 	}
 }

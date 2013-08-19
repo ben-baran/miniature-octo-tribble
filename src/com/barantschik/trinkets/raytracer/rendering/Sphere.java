@@ -1,12 +1,19 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
+
 
 public class Sphere implements Renderable
 {
-	private static final double DEFAULT_SHININESS = 200;
+	private static final double DEFAULT_SHININESS = 100;
 	private double shininess;
 	
 	private static final float DEFAULT_REFLECTIVITY = 1;
 	private float reflectivity;
+	
+	private static final float DEFAULT_TRANSMISSION = 0;
+	private float transmission;
+	
+	private static final float DEFAULT_INDEX_OF_REFRACTION = 1;
+	private float indexOfRefraction;
 	
 	double[] pos;
 	double radius;
@@ -18,6 +25,11 @@ public class Sphere implements Renderable
 	private boolean transformed = false;
 	private M4x4 transformMatrix = M4x4.identity();
 	private M4x4 inverseTransformMatrix = M4x4.identity();
+	
+	public Sphere(double[] pos, double radius)
+	{
+		this(pos, radius, GMath.empty());
+	}
 	
 	public Sphere(double[] pos, double radius, float[] color)
 	{
@@ -46,14 +58,41 @@ public class Sphere implements Renderable
 	
 	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive, float reflectivity)
 	{
+		this(pos, radius, diffuse, specular, shininess, ambient, emmissive, DEFAULT_REFLECTIVITY, DEFAULT_TRANSMISSION);
+	}
+	
+	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive, float reflectivity, float transmission)
+	{
+		this(pos, radius, diffuse, specular, shininess, ambient, emmissive, DEFAULT_REFLECTIVITY, DEFAULT_TRANSMISSION, DEFAULT_INDEX_OF_REFRACTION);
+	}
+	
+	public Sphere(double[] pos, double radius, float[] diffuse, float[] specular, double shininess, float[] ambient, float[] emmissive, float reflectivity, float transmission, float indexOfRefraction)
+	{
 		this.pos = pos;
 		this.radius = radius;
 		this.diffuse = diffuse;
 		this.specular = specular;
 		this.shininess = shininess;
 		this.reflectivity = reflectivity;
+		this.transmission = transmission;
+		this.indexOfRefraction = indexOfRefraction;
 		this.ambient = ambient;
 		this.emmissive = emmissive;
+	}
+	
+	public void setMaterial(Material m)
+	{
+		diffuse = m.diffuse;
+		specular = m.specular;
+		
+		shininess = m.shininess;
+		
+		reflectivity = m.reflectivity;
+		transmission = m.transmission;
+		indexOfRefraction = m.indexOfRefraction;
+		
+		ambient = m.ambient;
+		emmissive = m.emmissive;
 	}
 	
 	public IntersectionData giveIntersection(Ray r)
@@ -169,4 +208,13 @@ public class Sphere implements Renderable
 		return emmissive;
 	}
 
+	public float getTransmission()
+	{
+		return transmission;
+	}
+
+	public float getIndexOfRefraction()
+	{
+		return indexOfRefraction;
+	}
 }

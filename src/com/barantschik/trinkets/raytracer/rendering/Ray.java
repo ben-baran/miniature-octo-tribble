@@ -1,9 +1,12 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
+
 
 public class Ray
 {
 	double pos[];
 	double dir[];
+	
+	float lastIndex = 1;
 
 	public Ray(double[] pos, double[] dir)
 	{

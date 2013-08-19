@@ -1,13 +1,15 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Calendar;
+
 
 public abstract class RMath
 {	
-	private static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
+	public static IntersectionData findIntersection(Ray r, Renderable[] renderableList)
 	{
 		IntersectionData shortest = new IntersectionData(Double.POSITIVE_INFINITY, null);
 
@@ -22,19 +24,25 @@ public abstract class RMath
 		return shortest;
 	}
 
-	private static boolean inShadow(double[] p, Light light, Renderable[] renderableList, ScenePreferences sp)
+	private static float shadow(double[] p, Light light, Renderable[] renderableList, ScenePreferences sp)
 	{
+		float attenuation = 1;
 		for(Renderable renderable : renderableList)
 		{
 			if(light.blocked(p, renderable, sp.getFloatAdjust()))
 			{
-				return true;
+				attenuation *= renderable.getTransmission();
+				
+				if(attenuation == 0)
+				{
+					return attenuation;
+				}
 			}
 		}
-		return false;
+		return attenuation;
 	}
 
-	public static Image drawScene(Scene s, Image image)
+	public static BufferedImage drawScene(Scene s, BufferedImage image)
 	{
 		int width = image.getWidth(null), height = image.getHeight(null);
 		Graphics g = image.getGraphics();
@@ -54,7 +62,7 @@ public abstract class RMath
 				{
 					Ray r = rays[rNum];
 
-					float[] curColor = getRecursiveColorValue(1, s, r);
+					float[] curColor = getRecursiveColorValue(1, s, r, 1);
 
 					colors[rNum] = curColor;
 				}						
@@ -75,7 +83,7 @@ public abstract class RMath
 
 		if(interData.renderable == null)
 		{
-			return new float[]{0, 0, 0};
+			return GMath.empty();
 		}
 
 		float[] colorVal = new float[3];
@@ -88,7 +96,8 @@ public abstract class RMath
 
 		for(int lightNum = 0; lightNum < lights.length; lightNum++)
 		{
-			if(!inShadow(point, lights[lightNum], renderable, s.getSP()))
+			float shadowAttenuation = shadow(point, lights[lightNum], renderable, s.getSP());
+			if(shadowAttenuation != 0)
 			{
 				double[] directionalVector = lights[lightNum].directionalVector(point);
 				
@@ -98,7 +107,7 @@ public abstract class RMath
 
 				
 				float[] lightIntensity = lights[lightNum].getIntensity(point);
-				float[] curVal = GMath.mult(GMath.add(diffuse, specular), lightIntensity);
+				float[] curVal = GMath.mult(GMath.mult(GMath.add(diffuse, specular), lightIntensity), shadowAttenuation);
 				
 				colorVal = GMath.add(colorVal, curVal);
 			}
@@ -111,9 +120,9 @@ public abstract class RMath
 		return colorVal;
 	}
 
-	public static float[] getRecursiveColorValue(int n, Scene s, Ray r)
+	public static float[] getRecursiveColorValue(int n, Scene s, Ray r, double weight)
 	{
-		if(n == s.getSP().getNumRecursive())
+		if(n == s.getSP().getNumRecursive() || weight < s.getSP().getRecursiveThreshold())
 		{
 			return getColorValue(findIntersection(r, s.getRenderable()), r, s);
 		}
@@ -125,10 +134,16 @@ public abstract class RMath
 			{
 				double[] interPoint = r.makeVector(interData.t);
 				double[] difference = GMath.subtract(r.pos, interPoint);
-				Ray original = new Ray(interPoint, GMath.reflectRay(difference, interData.renderable.getNormal(interPoint)));
-				Ray reflected = new Ray(GMath.add(interPoint, GMath.mult(original.dir, s.getSP().getFloatAdjust())), original.dir);
+				double[] normal = interData.renderable.getNormal(interPoint);
 				
-				return GMath.capColor(GMath.add(getColorValue(interData, r, s), GMath.mult(getRecursiveColorValue(n + 1, s, reflected), interData.renderable.getReflectivity())));
+				Ray originalRefl = new Ray(interPoint, GMath.reflectRay(difference, normal));
+				Ray reflected = new Ray(GMath.add(interPoint, GMath.mult(originalRefl.dir, s.getSP().getFloatAdjust())), originalRefl.dir);
+				Ray originalRefr = GMath.refract(interPoint, normal, r, interData.renderable.getIndexOfRefraction());
+				Ray refracted = new Ray(GMath.add(interPoint, GMath.mult(originalRefr.dir, s.getSP().getFloatAdjust())), originalRefr.dir);
+				
+				return GMath.capColor(GMath.add(GMath.mult(GMath.add(getColorValue(interData, r, s),
+						              GMath.mult(getRecursiveColorValue(n + 1, s, reflected, weight * interData.renderable.getReflectivity()), interData.renderable.getReflectivity())), 1 - interData.renderable.getTransmission()),
+						              GMath.mult(getRecursiveColorValue(n + 1, s, refracted, weight * interData.renderable.getTransmission()), interData.renderable.getTransmission())));
 			}
 			else
 			{

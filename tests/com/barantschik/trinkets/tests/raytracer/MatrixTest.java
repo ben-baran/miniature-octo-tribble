@@ -2,7 +2,7 @@ package com.barantschik.trinkets.tests.raytracer;
 
 import org.junit.Test;
 
-import com.barantschik.trinkets.raytracer.M4x4;
+import com.barantschik.trinkets.raytracer.rendering.M4x4;
 
 import static org.junit.Assert.*;
 

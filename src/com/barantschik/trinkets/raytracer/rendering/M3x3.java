@@ -1,4 +1,4 @@
-package com.barantschik.trinkets.raytracer;
+package com.barantschik.trinkets.raytracer.rendering;
 
 public class M3x3
 {
